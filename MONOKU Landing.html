@@ -1,0 +1,2013 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow, noarchive" />
+<title>MonoQ — エンジニアの実力を、正しく評価する。</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Noto+Sans+Mono:wght@400;500;600;700&family=Noto+Serif+JP:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_right_alt" />
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+
+<style>
+  /* ─── TOKENS ─────────────────────────────────────────── */
+  :root{
+    --bg: #f4f1ea;           /* warm off-white */
+    --bg-alt: #ebe6db;       /* warm stone */
+    --bg-card: #ffffff;
+    --fg: #0d0e0c;
+    --fg-2: #2a2c28;
+    --fg-3: #5b5e57;
+    --fg-4: #8f928a;
+    --line: rgba(13,14,12,0.10);
+    --line-2: rgba(13,14,12,0.18);
+    --accent-a: #ff8400;
+    --accent-b: #ff4c00;
+    --accent-grad: linear-gradient(90deg, #ff8400, #ff4c00);
+    --accent-grad-r: linear-gradient(180deg, #ff8400, #ff4c00);
+    --dark-bg: #040905;
+    --dark-fg: #f4f1ea;
+    --dark-line: rgba(255,255,255,0.08);
+    --term-green: #4ED851;
+    --term-cyan: #81D0D7;
+    --serif: "Noto Serif JP", serif;
+    --sans: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
+    --mono: "Noto Sans Mono","Courier New",monospace;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--sans);
+    background:var(--bg);
+    color:var(--fg);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    line-height:1.6;
+  }
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+  button{font-family:inherit;cursor:pointer;border:none;background:none}
+
+  ::selection{background:#ff4c00;color:#fff}
+
+  /* ─── UTIL ───────────────────────────────────────────── */
+  .wrap{max-width:1280px;margin:0 auto;padding:0 40px}
+  .mono{font-family:var(--mono);letter-spacing:0.04em}
+  .grad-text{
+    background:var(--accent-grad);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;
+  }
+  .grad-bar{
+    display:inline-block;width:48px;height:2px;
+    background:var(--accent-grad);vertical-align:middle;
+  }
+  .label{
+    font-family:var(--sans);
+    font-size:18px;
+    font-weight:700;
+    letter-spacing:0.04em;
+    color:var(--fg-2);
+  }
+  .num{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.14em;
+    color:var(--fg-4);
+  }
+
+  /* Scroll-reveal */
+  .reveal{
+    opacity:0;
+    transform:translateY(18px);
+    transition:
+      opacity .65s cubic-bezier(.2,.7,.2,1),
+      transform .65s cubic-bezier(.2,.7,.2,1);
+  }
+  .reveal.in{
+    opacity:1;
+    transform:translateY(0);
+    animation:terminalReveal .75s steps(2,end) both;
+  }
+  .reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}
+  .reveal.d3{transition-delay:.24s}.reveal.d4{transition-delay:.32s}
+  @keyframes terminalReveal{
+    0%,18%{text-shadow:none}
+    19%{text-shadow:1px 0 rgba(78,216,81,0.22),-1px 0 rgba(129,208,215,0.18)}
+    26%{text-shadow:none}
+    34%{text-shadow:1px 0 rgba(255,132,0,0.18)}
+    42%,100%{text-shadow:none}
+  }
+
+  /* ─── NAV (global) ───────────────────────────────────── */
+  .gnav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 40px;
+    transition:background .4s,border-color .4s,color .4s,backdrop-filter .4s;
+    color:#fff;
+    border-bottom:0.5px solid rgba(255,255,255,0);
+  }
+  .gnav.scrolled{
+    background:rgba(244,241,234,0.82);
+    backdrop-filter:blur(14px) saturate(140%);
+    -webkit-backdrop-filter:blur(14px) saturate(140%);
+    color:var(--fg);
+    border-bottom-color:var(--line);
+  }
+  .gnav-logo{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-weight:700;letter-spacing:0.2em;font-size:13px}
+  .gnav-mark{
+    width:108px;height:30px;display:block;flex:0 0 auto;
+  }
+  .gnav-mark svg{display:block;width:100%;height:100%;overflow:visible}
+  .gnav-mark .logo-orange{fill:#e63d03}
+  .gnav-mark .logo-blue{fill:#f4f1ea}
+  .gnav.scrolled .gnav-mark .logo-blue{fill:#031e40}
+  .gnav ul{display:flex;gap:30px;list-style:none}
+  .gnav ul a{
+    font-family:var(--mono);font-size:12px;letter-spacing:0.08em;
+    position:relative;padding:4px 0;
+    transition:color .25s;
+  }
+  .gnav ul a sup{font-size:8px;background:var(--accent-grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .gnav ul a::after{
+    content:"";position:absolute;left:0;right:0;bottom:-2px;height:1px;
+    background:var(--accent-grad);
+    transform:scaleX(0);transform-origin:left;transition:transform .35s cubic-bezier(.2,.7,.2,1);
+  }
+  .gnav ul a:hover::after{transform:scaleX(1)}
+  .gnav-cta{
+    font-family:var(--mono);font-size:12px;letter-spacing:0.06em;
+    padding:10px 18px;border-radius:6px;
+    border:1px solid currentColor;
+    display:inline-flex;align-items:center;gap:8px;
+    position:relative;overflow:hidden;isolation:isolate;
+    transition:color .3s,border-color .3s;
+  }
+  .gnav-cta::before{
+    content:"";position:absolute;inset:0;z-index:-1;
+    background:var(--accent-grad);transform:translateY(101%);transition:transform .35s cubic-bezier(.2,.7,.2,1);
+  }
+  .gnav-cta:hover{color:#fff;border-color:transparent}
+  .gnav-cta:hover::before{transform:translateY(0)}
+  .svg-arrow{
+    display:inline-block;flex:0 0 auto;
+    font-family:'Material Symbols Outlined';
+    font-weight:normal;font-style:normal;font-size:22px;line-height:1;
+    letter-spacing:normal;text-transform:none;white-space:nowrap;word-wrap:normal;direction:ltr;
+    -webkit-font-feature-settings:'liga';-webkit-font-smoothing:antialiased;
+    font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+    vertical-align:-5px;
+  }
+  .svg-arrow::before{content:"arrow_right_alt"}
+
+  /* ─── HERO (dark terminal) ───────────────────────────── */
+  .hero{
+    background:var(--dark-bg);
+    color:var(--dark-fg);
+    position:relative;
+    padding:96px 0 80px;
+    overflow:hidden;
+    border-bottom:1px solid var(--dark-bg);
+  }
+  .hero::after{ /* bottom orange wash */
+    content:"";position:absolute;left:0;right:0;bottom:0;height:120px;
+    background:linear-gradient(180deg, transparent, rgba(255,76,0,0.05));
+    pointer-events:none;
+  }
+  .bgl{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+  .bgc{position:absolute;top:0;font-size:10px;line-height:1.8;white-space:pre;animation:bgUp linear infinite;font-family:var(--mono)}
+  @keyframes bgUp{from{transform:translateY(108%)}to{transform:translateY(-108%)}}
+
+  .hero-inner{position:relative;z-index:5;display:grid;grid-template-columns:80px 1fr 220px;gap:28px;align-items:start;padding:0 28px}
+  .hero-side{
+    padding-top:8px;font-family:var(--mono);font-size:10px;line-height:2.5;
+    color:rgba(78,216,81,0.2);border-right:0.5px solid rgba(78,216,81,0.08);
+  }
+  .hero-side div:first-child{color:rgba(255,132,0,0.7)}
+  .hero-main{display:flex;flex-direction:column;gap:22px}
+
+  .tm-outer{
+    padding:1px;border-radius:14px;
+    background:linear-gradient(145deg,rgba(255,255,255,0.22) 0%,rgba(80,80,80,0.08) 35%,rgba(0,0,0,0.9) 100%);
+    box-shadow:0 28px 80px rgba(0,0,0,0.7),0 0 0 0.5px rgba(0,0,0,1),0 0 60px rgba(255,76,0,0.06);
+  }
+  .tm{background:#080d08;border-radius:13px;overflow:hidden}
+  .tmbar{
+    background:linear-gradient(90deg,#1e2a1e 0%,#111611 50%,#000 100%);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:11px 14px;border-bottom:1px solid rgba(0,0,0,0.8);position:relative;
+  }
+  .ttraf{display:flex;gap:7px}
+  .ttl{width:12px;height:12px;border-radius:50%}
+  .ttl-r{background:radial-gradient(circle at 35% 30%,#ff7c70,#ff5f57);box-shadow:0 0 0 0.5px rgba(0,0,0,0.5)}
+  .ttl-y{background:radial-gradient(circle at 35% 30%,#ffd968,#febc2e);box-shadow:0 0 0 0.5px rgba(0,0,0,0.5)}
+  .ttl-g{background:radial-gradient(circle at 35% 30%,#55e070,#28c840);box-shadow:0 0 0 0.5px rgba(0,0,0,0.5)}
+  .tmtitle{position:absolute;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:10.5px;color:rgba(255,255,255,0.3);letter-spacing:0.03em}
+  .tconn{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;color:#4ED851;letter-spacing:0.08em}
+  .cdot{width:5px;height:5px;border-radius:50%;background:#4ED851;animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.18}}
+
+  .cblock{padding:14px 16px 12px;border-bottom:0.5px solid rgba(78,216,81,0.06);font-family:var(--mono)}
+  .cl{display:flex;align-items:baseline;font-size:10px;line-height:2}
+  .ln{color:rgba(78,216,81,0.12);width:18px;text-align:right;flex-shrink:0;margin-right:10px;user-select:none}
+  .sp{color:rgba(78,216,81,0.1);margin-right:8px;flex-shrink:0}
+  .c0{color:rgba(129,208,215,0.25)}.cv{color:rgba(129,208,215,0.6)}
+  .cs{color:rgba(78,216,81,0.48)}.cf{color:rgba(78,216,81,0.55)}
+  .ck{color:rgba(129,208,215,0.52)}.cd{color:rgba(255,255,255,0.2)}.cx{color:rgba(78,216,81,0.52)}
+  .ch{color:rgba(255,132,0,0.7)}
+
+  .runsec{padding:20px 18px 28px;font-family:var(--mono)}
+  .rcmd{font-size:11px;color:rgba(78,216,81,0.45);margin-bottom:18px;min-height:15px}
+  .rhead{
+    font-family:var(--sans);
+    font-size:38px;color:#fff;line-height:1.18;margin-bottom:16px;min-height:46px;font-weight:500;letter-spacing:-0.01em;
+  }
+  .rhead .em{
+    background:var(--accent-grad);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .rsub{font-family:var(--sans);font-size:15px;color:#81D0D7;line-height:1.85;min-height:46px;font-weight:400}
+
+  .cbg{display:inline-block;width:13px;height:1.05em;background:#4ED851;vertical-align:middle;animation:blink 1s step-end infinite}
+  .cbt{display:inline-block;width:9px;height:.9em;background:#81D0D7;vertical-align:middle;animation:blink 1s step-end infinite}
+  .cbs{display:inline-block;width:8px;height:.85em;background:#ff8400;vertical-align:middle;animation:blink 1s step-end infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+  .hero-cta-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .bmsg{font-family:var(--sans);font-size:13.5px;color:#81D0D7;line-height:1.8;min-height:20px;flex:1;min-width:280px}
+  .expl{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:var(--mono);font-size:11.5px;
+    color:#fff;
+    padding:12px 22px;border-radius:6px;
+    position:relative;overflow:hidden;isolation:isolate;
+    border:1px solid rgba(255,132,0,0.7);
+  }
+  .expl::before{
+    content:"";position:absolute;inset:0;z-index:-1;background:var(--accent-grad);
+    transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.2,.7,.2,1);
+  }
+  .expl:hover{border-color:transparent}
+  .expl:hover::before{transform:scaleX(1)}
+  .expl .arrow{
+    font-family:'Material Symbols Outlined';
+    font-size:24px;line-height:1;
+    font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+    transition:transform .35s;
+  }
+  .expl:hover .arrow{transform:translateX(4px)}
+
+  /* hero right rail */
+  .hero-right{font-family:var(--mono);font-size:9px;line-height:1.85;padding-top:4px;border-left:0.5px solid rgba(78,216,81,0.06);padding-left:16px}
+  .hrb{margin-bottom:18px}
+  .hrc{color:rgba(78,216,81,0.38);margin-bottom:6px;font-size:9.5px}
+  .hrd{color:rgba(78,216,81,0.16);line-height:1.85}
+  .hrh{color:rgba(255,132,0,0.7);margin-bottom:6px;font-size:9.5px;letter-spacing:0.08em}
+  .hri{color:rgba(78,216,81,0.18);line-height:2}.hri span{color:rgba(129,208,215,0.55)}
+  .mbox{border:0.5px dashed rgba(255,132,0,0.25);padding:11px;border-radius:4px;background:rgba(255,132,0,0.02)}
+  .mh{color:rgba(255,132,0,0.55);font-size:8.5px;letter-spacing:0.14em;margin-bottom:6px;font-weight:600}
+  .mt{color:rgba(255,255,255,0.5);line-height:1.95;font-size:9.5px;font-family:var(--sans)}
+  .pc{color:rgba(78,216,81,0.32);font-size:9px;margin-bottom:5px}
+  .pb{color:rgba(78,216,81,0.22);font-size:9px;margin-bottom:3px}
+  .pr{color:rgba(255,132,0,0.7);font-size:9px;opacity:0;transition:opacity .4s}
+  .hero-bf{
+    position:relative;z-index:5;padding:10px 40px;font-family:var(--mono);font-size:9px;
+    color:rgba(78,216,81,0.1);border-top:0.5px solid rgba(78,216,81,0.05);
+    white-space:nowrap;overflow:hidden;
+    margin-top:48px;
+  }
+
+  /* ─── SECTION CHROME ────────────────────────────────── */
+  section.sec{padding:140px 0;position:relative}
+  .sec-head{
+    display:grid;grid-template-columns:1fr 2fr;gap:60px;
+    margin-bottom:80px;align-items:end;
+    padding-bottom:32px;border-bottom:1px solid var(--line);
+  }
+  .sec-tag{display:flex;align-items:center;gap:12px}
+  .sec-tag .grad-bar{width:32px;height:2px}
+  .sec-num{display:flex;align-items:baseline;gap:14px;margin-bottom:18px}
+  .sec-num .big{
+    font-family:var(--mono);font-size:15px;letter-spacing:0.08em;color:var(--fg-2);
+  }
+  .sec-num .big b{
+    background:var(--accent-grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:700;
+  }
+  h2.sec-title{
+    font-family:var(--sans);font-weight:500;
+    font-size:clamp(40px,5vw,68px);line-height:1.1;letter-spacing:-0.02em;
+    text-wrap:balance;
+  }
+  .sec-title em{font-style:normal;background:var(--accent-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sec-lead{
+    font-size:17px;line-height:1.95;color:var(--fg-2);max-width:560px;
+  }
+
+  /* ─── VISION ─────────────────────────────────────────── */
+  #vision{background:var(--bg)}
+  .vis-quote{
+    font-family:var(--sans);font-weight:500;
+    font-size:clamp(28px,3.4vw,46px);line-height:1.5;letter-spacing:-0.01em;
+    max-width:980px;margin:0 auto 80px;text-align:center;
+    text-wrap:balance;
+  }
+  .vis-quote em{font-style:normal;background:var(--accent-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .vis-pillars{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+    background:var(--line);border:1px solid var(--line);border-radius:2px;overflow:hidden;
+  }
+  .pillar{
+    background:var(--bg);padding:48px 36px 56px;
+    position:relative;transition:background .4s;
+  }
+  .pillar:hover{background:var(--bg-card)}
+  .pillar-num{
+    font-family:var(--mono);font-size:11px;letter-spacing:0.14em;color:var(--fg-4);
+    margin-bottom:32px;display:flex;align-items:center;gap:10px;
+  }
+  .pillar-num::before{
+    content:"";width:6px;height:6px;border-radius:50%;background:var(--accent-grad);
+    box-shadow:0 0 0 3px rgba(255,76,0,0.1);
+  }
+  .pillar h3{
+    font-family:var(--sans);font-size:24px;font-weight:700;line-height:1.4;
+    margin-bottom:18px;letter-spacing:-0.01em;
+  }
+  .pillar p{font-size:14.5px;line-height:1.9;color:var(--fg-2)}
+  .pillar-arrow{
+    position:absolute;bottom:24px;right:24px;
+    width:36px;height:36px;border-radius:50%;
+    border:1px solid var(--line-2);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--fg-3);transition:all .35s;
+    font-size:0;
+  }
+  .pillar-arrow::before{
+    content:"arrow_right_alt";
+    font-family:'Material Symbols Outlined';
+    font-size:22px;line-height:1;
+    font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+    transform:rotate(-45deg);
+  }
+  .pillar:hover .pillar-arrow{background:var(--accent-grad);color:#fff;border-color:transparent;transform:translate(2px,-2px)}
+
+  /* ─── BUSINESS ──────────────────────────────────────── */
+  #business{background:var(--bg-alt)}
+  .biz-list{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line-2)}
+  .biz-list.compact .biz-row{grid-template-columns:80px 1.35fr 1.8fr 64px;padding:44px 0}
+  .biz-row{
+    display:grid;grid-template-columns:90px 1.2fr 1.8fr 80px;gap:32px;
+    padding:38px 0;border-bottom:1px solid var(--line-2);
+    align-items:center;position:relative;
+    transition:padding .35s;
+  }
+  .biz-row::before{
+    content:"";position:absolute;left:0;right:0;top:0;bottom:0;
+    background:linear-gradient(90deg,rgba(255,132,0,0.06),rgba(255,76,0,0));
+    opacity:0;transition:opacity .35s;pointer-events:none;
+  }
+  .biz-row:hover::before{opacity:1}
+  .biz-row:hover{padding-left:24px;padding-right:24px}
+  .biz-no{font-family:var(--mono);font-size:13px;color:var(--fg-4);letter-spacing:0.12em}
+  .biz-no b{background:var(--accent-grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:700}
+  .biz-name{font-family:var(--sans);font-size:28px;font-weight:700;letter-spacing:-0.01em;line-height:1.3}
+  .biz-name small{display:block;font-family:var(--mono);font-size:11px;color:var(--fg-3);letter-spacing:0.12em;text-transform:uppercase;font-weight:500;margin-top:6px}
+  .biz-desc{font-size:14.5px;line-height:1.85;color:var(--fg-2)}
+  .biz-arrow{
+    justify-self:end;
+    font-family:var(--mono);font-size:0;color:var(--fg-3);
+    width:44px;height:44px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    border:1px solid var(--line-2);transition:all .35s;
+  }
+  .biz-arrow::before{
+    content:"arrow_right_alt";
+    font-family:'Material Symbols Outlined';
+    font-size:24px;line-height:1;
+    font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+    transform:rotate(0deg);
+    transition:transform .35s;
+  }
+  .biz-row:hover .biz-arrow{background:var(--accent-grad);color:#fff;border-color:transparent;transform:translate(2px,-2px)}
+  .biz-row:hover .biz-arrow::before{transform:rotate(-45deg)}
+
+  /* ─── COMPANY ───────────────────────────────────────── */
+  #company{background:var(--bg)}
+  .co-grid{display:block;max-width:920px}
+  .co-table{display:flex;flex-direction:column}
+  .co-row{
+    display:grid;grid-template-columns:140px 1fr;gap:24px;
+    padding:22px 0;border-bottom:1px solid var(--line);
+    align-items:start;
+  }
+  .co-row:first-child{border-top:1px solid var(--line-2)}
+  .co-row dt{font-family:var(--mono);font-size:11px;letter-spacing:0.14em;color:var(--fg-3);text-transform:uppercase;padding-top:4px}
+  .co-row dd{font-size:15px;line-height:1.75;color:var(--fg)}
+  .co-row dd b{font-weight:500}
+  /* ─── MESSAGE ────────────────────────────────────────── */
+  #message{background:var(--bg-alt)}
+  .msg-grid{display:grid;grid-template-columns:380px 1fr;gap:80px;align-items:start}
+  .msg-portrait{
+    aspect-ratio:4/5;background:#1a1c18;border-radius:4px;overflow:hidden;
+    border:1px solid var(--line);position:relative;
+    background-image:
+      linear-gradient(180deg,rgba(4,9,5,0) 45%,rgba(4,9,5,0.86) 100%),
+      url("uploads/monoq-founder-portrait.png");
+    background-size:cover;
+    background-position:center top;
+    display:flex;align-items:flex-end;
+    padding:24px;
+  }
+  .msg-portrait::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(135deg,rgba(78,216,81,0.1),transparent 32%,rgba(255,132,0,0.1));
+    pointer-events:none;
+  }
+  .msg-portrait-cap{
+    position:relative;z-index:2;
+    font-family:var(--mono);font-size:10px;letter-spacing:0.14em;color:rgba(255,255,255,0.5);
+  }
+  .msg-portrait-cap b{color:#fff;font-weight:500;font-family:var(--sans);font-size:15px;display:block;letter-spacing:0;margin-bottom:4px}
+  .msg-body .quote{
+    font-family:var(--serif);font-weight:500;
+    font-size:clamp(28px,2.8vw,40px);line-height:1.55;letter-spacing:-0.005em;
+    margin-bottom:36px;text-wrap:normal;
+    max-width:none;
+  }
+  .msg-body .quote em{font-style:normal;background:var(--accent-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .msg-body p{font-size:15.5px;line-height:2;color:var(--fg-2);margin-bottom:20px;max-width:620px}
+  .msg-sig{
+    display:flex;align-items:center;gap:18px;margin-top:40px;
+    padding-top:24px;border-top:1px solid var(--line);max-width:620px;
+  }
+  .msg-sig .name{font-size:16px;font-weight:500}
+  .msg-sig .name small{display:block;font-family:var(--mono);font-size:10.5px;color:var(--fg-3);letter-spacing:0.12em;text-transform:uppercase;margin-top:4px;font-weight:400}
+
+  /* ─── NEWS ──────────────────────────────────────────── */
+  #news{background:var(--bg)}
+  .news-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    gap:48px 32px;
+  }
+  .news-card{position:relative;display:flex;flex-direction:column}
+  .news-link{display:flex;flex-direction:column;height:100%;color:inherit}
+  .news-thumb{
+    position:relative;aspect-ratio:16/10;overflow:hidden;
+    border-radius:3px;background:var(--bg-alt);
+    margin-bottom:24px;
+    border:1px solid var(--line);
+  }
+  .news-thumb::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(180deg,rgba(13,14,12,0) 55%,rgba(13,14,12,0.32));
+    transition:opacity .35s;
+  }
+  .news-thumb img{
+    width:100%;height:100%;object-fit:cover;display:block;
+    transition:transform .8s cubic-bezier(.2,.7,.2,1);
+  }
+  .news-card:hover .news-thumb img{transform:scale(1.06)}
+  .news-cat{
+    position:absolute;top:12px;left:12px;z-index:2;
+    font-family:var(--mono);font-size:10px;letter-spacing:0.14em;
+    color:#fff;background:rgba(13,14,12,0.72);
+    padding:6px 10px;border-radius:2px;
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    text-transform:uppercase;font-weight:600;
+  }
+  .news-cat.is-accent{background:var(--accent-grad)}
+  .news-meta{
+    display:flex;align-items:center;gap:12px;margin-bottom:14px;
+    font-family:var(--mono);font-size:11px;letter-spacing:0.08em;
+  }
+  .news-date{color:var(--fg-3)}
+  .news-meta .dot{
+    width:3px;height:3px;border-radius:50%;background:var(--fg-4);
+  }
+  .news-tag{
+    color:var(--fg-3);font-size:10.5px;letter-spacing:0.1em;
+  }
+  .news-title{
+    font-family:var(--sans);font-size:18.5px;font-weight:700;
+    line-height:1.55;letter-spacing:-0.005em;
+    margin-bottom:12px;
+    color:var(--fg);
+    transition:color .25s;
+  }
+  .news-card:hover .news-title{
+    background:var(--accent-grad);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .news-excerpt{
+    font-size:13.5px;line-height:1.85;color:var(--fg-3);
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+    overflow:hidden;
+    margin-bottom:20px;
+  }
+  .news-readmore{
+    margin-top:auto;
+    font-family:var(--mono);font-size:11px;letter-spacing:0.08em;
+    color:var(--fg-2);display:inline-flex;align-items:center;gap:8px;
+    padding-top:16px;border-top:0.5px solid var(--line);
+    transition:color .25s;
+  }
+  .news-readmore .svg-arrow{font-size:18px;transition:transform .3s;vertical-align:-4px}
+  .news-card:hover .news-readmore{color:var(--accent-b)}
+  .news-card:hover .news-readmore .svg-arrow{transform:translateX(4px)}
+
+  .news-foot{
+    margin-top:72px;display:flex;justify-content:center;
+  }
+  .news-all{
+    font-family:var(--mono);font-size:12px;letter-spacing:0.08em;
+    display:inline-flex;align-items:center;gap:12px;
+    padding:18px 38px;border:1px solid var(--line-2);border-radius:6px;
+    position:relative;overflow:hidden;isolation:isolate;
+    transition:color .3s,border-color .3s;
+    color:var(--fg);
+  }
+  .news-all::before{
+    content:"";position:absolute;inset:0;z-index:-1;
+    background:var(--accent-grad);
+    transform:translateY(101%);transition:transform .35s cubic-bezier(.2,.7,.2,1);
+  }
+  .news-all:hover{color:#fff;border-color:transparent}
+  .news-all:hover::before{transform:translateY(0)}
+  .news-all .svg-arrow{font-size:20px;transition:transform .3s}
+  .news-all:hover .svg-arrow{transform:translateX(4px)}
+
+  /* ─── FAQ ───────────────────────────────────────────── */
+  #faq{background:var(--bg-alt)}
+  .faq-list{border-top:1px solid var(--line-2)}
+  .faq-item{border-bottom:1px solid var(--line-2)}
+  .faq-q{
+    width:100%;text-align:left;
+    display:grid;grid-template-columns:80px 1fr 40px;gap:24px;align-items:center;
+    padding:28px 4px;
+    font-family:var(--sans);font-size:18px;font-weight:500;color:var(--fg);
+    letter-spacing:-0.005em;
+    transition:padding .3s;
+  }
+  .faq-q:hover{padding-left:16px}
+  .faq-q .qnum{font-family:var(--mono);font-size:11px;color:var(--fg-4);letter-spacing:0.14em}
+  .faq-q .qtxt{line-height:1.55}
+  .faq-q .qico{
+    width:32px;height:32px;border-radius:50%;border:1px solid var(--line-2);
+    display:flex;align-items:center;justify-content:center;
+    transition:all .35s;position:relative;
+  }
+  .faq-q .qico::before,.faq-q .qico::after{
+    content:"";position:absolute;background:var(--fg-2);
+    transition:transform .35s,background .35s;
+  }
+  .faq-q .qico::before{width:11px;height:1.5px;left:10px;top:14.5px}
+  .faq-q .qico::after{width:1.5px;height:11px;left:15px;top:10px}
+  .faq-item.open .qico{background:var(--accent-grad);border-color:transparent}
+  .faq-item.open .qico::before,.faq-item.open .qico::after{background:#fff}
+  .faq-item.open .qico::after{transform:scaleY(0)}
+  .faq-a{
+    display:grid;grid-template-rows:0fr;
+    transition:grid-template-rows .45s cubic-bezier(.2,.7,.2,1);
+  }
+  .faq-item.open .faq-a{grid-template-rows:1fr}
+  .faq-a-inner{
+    overflow:hidden;
+    display:grid;grid-template-columns:80px 1fr 40px;gap:24px;
+  }
+  .faq-a-inner .body{
+    grid-column:2;
+    padding:0 0 32px;font-size:14.5px;line-height:2;color:var(--fg-2);max-width:760px;
+  }
+
+  /* ─── CONTACT ───────────────────────────────────────── */
+  #contact{background:var(--dark-bg);color:var(--dark-fg);padding:140px 0 0;position:relative;overflow:hidden}
+  #contact::before{
+    content:"";position:absolute;top:-1px;left:0;right:0;height:1px;background:var(--accent-grad);
+  }
+  #contact .sec-head{border-bottom-color:rgba(255,255,255,0.1)}
+  #contact .sec-num .big{color:rgba(255,255,255,0.78)}
+  #contact .label{color:rgba(255,255,255,0.82)}
+  #contact .sec-title{color:#fff}
+  #contact .sec-lead{color:rgba(255,255,255,0.7)}
+  .ct-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:80px;align-items:start;margin-bottom:120px}
+  .ct-form{display:flex;flex-direction:column;gap:22px;max-width:620px}
+  .ct-field{display:flex;flex-direction:column;gap:8px}
+  .ct-field label{font-family:var(--mono);font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.55)}
+  .ct-field label .req{color:#ff8400;margin-left:4px}
+  .ct-field input,.ct-field textarea,.ct-field select{
+    background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,0.18);
+    color:#fff;font-family:var(--sans);font-size:15px;padding:10px 0;
+    transition:border-color .3s;outline:none;
+    font-weight:400;
+  }
+  .ct-field input::placeholder,.ct-field textarea::placeholder{color:rgba(255,255,255,0.25)}
+  .privacy-check{display:flex;align-items:flex-start;gap:10px;margin-top:18px;font-size:12px;line-height:1.8;color:rgba(255,255,255,0.65)}
+  .privacy-check input{width:16px;height:16px;margin-top:3px;accent-color:#ff8400;flex:0 0 auto}
+  .privacy-check a{color:#fff;text-decoration:underline;text-underline-offset:3px}
+  .ct-field input:focus,.ct-field textarea:focus,.ct-field select:focus{border-bottom-color:#ff8400}
+  .ct-field textarea{resize:vertical;min-height:120px;font-family:var(--sans)}
+  .ct-row{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .ct-submit{
+    align-self:flex-start;margin-top:16px;
+    font-family:var(--mono);font-size:13px;letter-spacing:0.06em;color:#fff;
+    background:var(--accent-grad);padding:16px 36px;border-radius:6px;
+    display:inline-flex;align-items:center;gap:10px;
+    transition:transform .25s,box-shadow .25s;
+    box-shadow:0 8px 24px rgba(255,76,0,0.25);
+  }
+  .ct-submit:hover{box-shadow:0 12px 32px rgba(255,76,0,0.4)}
+  .ct-submit .plane{
+    display:inline-block;
+    position:relative;
+    width:16px;height:16px;
+    margin-left:1px;
+    transform-origin:center;
+  }
+  .ct-submit .plane::before{
+    content:"";
+    position:absolute;inset:2px 1px 2px 2px;
+    background:currentColor;
+    clip-path:polygon(0 0,100% 50%,0 100%,24% 54%);
+    offset-path:path("M 0 0 C 34 -4 78 -26 74 -56 C 68 -88 -8 -82 -70 -42 C -116 -12 -72 24 -18 10 C -8 7 -2 3 0 0");
+    offset-distance:0%;
+    offset-rotate:auto;
+    offset-anchor:0 0;
+    will-change:offset-distance,opacity;
+  }
+  .ct-submit.plane-active .plane::before{
+    animation:paperPlane 3.4s cubic-bezier(.42,0,.18,1);
+  }
+  @keyframes paperPlane{
+    0%{offset-distance:0%;opacity:1}
+    46%{opacity:.82}
+    78%{opacity:.92}
+    100%{offset-distance:100%;opacity:1}
+  }
+  .ct-info{font-family:var(--mono);font-size:12.5px;line-height:2;color:rgba(255,255,255,0.6)}
+  .ct-info h4{font-family:var(--mono);font-size:10.5px;letter-spacing:0.18em;text-transform:uppercase;color:#ff8400;margin-bottom:14px;margin-top:32px;font-weight:600}
+  .ct-info h4:first-child{margin-top:0}
+  .ct-info a:hover{color:#ff8400}
+  .ct-info .term{
+    margin-top:48px;padding:18px 18px;border:0.5px solid rgba(78,216,81,0.18);border-radius:4px;
+    font-size:10.5px;color:rgba(78,216,81,0.5);line-height:1.95;
+    background:rgba(78,216,81,0.02);
+  }
+
+  /* ─── FOOTER ─────────────────────────────────────────── */
+  .foot{
+    background:var(--dark-bg);color:rgba(255,255,255,0.5);
+    padding:80px 0 32px;border-top:1px solid rgba(255,255,255,0.08);
+    font-family:var(--mono);font-size:11px;
+  }
+  .foot-top{display:grid;grid-template-columns:1fr 2fr;gap:80px;margin-bottom:80px}
+  .foot-brand .foot-logo{display:flex;align-items:center;gap:10px;color:#fff;margin-bottom:18px;font-weight:700;letter-spacing:0.2em;font-size:14px}
+  .foot-brand .foot-mark{width:28px;height:28px;border:1.5px solid #fff;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px}
+  .foot-brand p{font-size:11px;line-height:1.9;color:rgba(255,255,255,0.5);max-width:280px}
+  .foot-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:28px}
+  .foot-cols h5{color:#ff8400;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:14px;font-weight:600}
+  .foot-cols ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+  .foot-cols a{font-size:11.5px;color:rgba(255,255,255,0.65);transition:color .25s}
+  .foot-cols a:hover{color:#fff}
+  .foot-bot{
+    display:flex;justify-content:space-between;align-items:center;
+    padding-top:32px;border-top:1px solid rgba(255,255,255,0.08);
+    flex-wrap:wrap;gap:18px;
+  }
+  .foot-bot .copy{color:rgba(255,255,255,0.4)}
+  .foot-bot .stat{display:flex;align-items:center;gap:8px;color:rgba(78,216,81,0.55)}
+  .foot-bot .stat::before{content:"";width:6px;height:6px;border-radius:50%;background:#4ED851;animation:pulse 2s ease-in-out infinite}
+
+  /* ─── RESPONSIVE ─────────────────────────────────────── */
+  /* Opening */
+  .opening{
+    position:fixed;inset:0;z-index:9999;
+    display:grid;place-items:center;
+    background:#f4f1ea;color:#031e40;
+    font-family:var(--mono);
+    overflow:hidden;
+  }
+  .opening::before{
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(circle at 50% 48%,rgba(230,61,3,0.08),transparent 28%),
+      linear-gradient(135deg,rgba(3,30,64,0.04),transparent 42%);
+    opacity:1;
+  }
+  .opening::after{
+    content:"";position:absolute;left:50%;top:50%;
+    width:min(560px,76vw);height:1px;
+    background:linear-gradient(90deg,transparent,rgba(230,61,3,0.35),transparent);
+    transform:translate(-50%,92px);
+  }
+  .op-logo{
+    position:relative;z-index:1;
+    width:min(560px,calc(100vw - 48px));
+    overflow:visible;
+  }
+  .op-logo .logo-path{
+    fill:var(--logo-fill);
+    opacity:0;
+    transform-box:fill-box;
+    transform-origin:center;
+  }
+  .op-logo .st0{--logo-fill:#e63d03}
+  .op-logo .st1{--logo-fill:#0d1f34}
+  .op-logo .st2{--logo-fill:#031e40}
+  .op-logo .st3{--logo-fill:#031e3f}
+
+  @media (max-width:1100px){
+    .hero-inner{grid-template-columns:60px 1fr}
+    .hero-right{display:none}
+    .vis-pillars{grid-template-columns:1fr}
+    .co-grid{max-width:100%}
+    .msg-grid{grid-template-columns:1fr;gap:48px}
+    .msg-portrait{max-width:420px}
+    .ct-grid{grid-template-columns:1fr;gap:60px}
+    .biz-row{grid-template-columns:50px 1fr;gap:18px}
+    .biz-row .biz-desc,.biz-row .biz-arrow{grid-column:2}
+    .biz-row .biz-arrow{justify-self:start;margin-top:8px}
+    .news-grid{grid-template-columns:repeat(2,1fr);gap:40px 24px}
+    .foot-top{grid-template-columns:1fr;gap:48px}
+    .foot-cols{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:720px){
+    .wrap{padding:0 24px}
+    .gnav{padding:14px 24px}
+    .gnav ul{display:none}
+    .gnav-cta{padding:8px 14px;font-size:11px}
+    .hero{padding:80px 0 56px}
+    .hero-inner{grid-template-columns:1fr;padding:0 20px;gap:20px}
+    .hero-side{display:none}
+    .rhead{font-size:28px}
+    section.sec{padding:88px 0}
+    .sec-head{grid-template-columns:1fr;gap:24px;margin-bottom:48px}
+    .biz-list.compact{border-top-color:var(--line)}
+    .biz-list.compact .biz-row{
+      grid-template-columns:1fr 42px;
+      gap:14px 18px;
+      padding:28px 0 32px;
+      align-items:start;
+    }
+    .biz-list.compact .biz-row:hover{padding-left:0;padding-right:0}
+    .biz-list.compact .biz-no{
+      grid-column:1;
+      grid-row:1;
+      font-size:12px;
+      margin-bottom:2px;
+    }
+    .biz-list.compact .biz-name{
+      grid-column:1;
+      grid-row:2;
+      font-size:22px;
+      line-height:1.45;
+      word-break:keep-all;
+      overflow-wrap:anywhere;
+    }
+    .biz-list.compact .biz-name small{
+      font-size:10px;
+      letter-spacing:0.08em;
+      margin-top:8px;
+    }
+    .biz-list.compact .biz-desc{
+      grid-column:1 / -1;
+      grid-row:3;
+      font-size:14px;
+      line-height:1.95;
+      color:var(--fg-2);
+      max-width:none;
+    }
+    .biz-list.compact .biz-arrow{
+      grid-column:2;
+      grid-row:1 / span 2;
+      justify-self:end;
+      align-self:start;
+      width:38px;
+      height:38px;
+      margin-top:0;
+    }
+    .faq-q{grid-template-columns:50px 1fr 30px;font-size:15px;padding:22px 4px}
+    .faq-q .qnum{font-size:10px}
+    .faq-a-inner{grid-template-columns:50px 1fr 30px}
+    .ct-row{grid-template-columns:1fr}
+    .news-grid{grid-template-columns:1fr;gap:44px}
+    .news-thumb{margin-bottom:20px}
+    .news-title{font-size:19px}
+    .news-foot{margin-top:48px}
+    .news-all{padding:16px 28px;font-size:11px}
+    .vis-quote{
+      font-size:clamp(24px,6.2vw,32px);
+      line-height:1.65;
+      letter-spacing:-0.005em;
+      margin-bottom:56px;
+      padding:0 4px;
+    }
+    .vis-quote br{display:none}
+  }
+</style>
+<script type="application/ld+json" id="monoq-schema">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://monoq.jp/#website",
+      "url": "https://monoq.jp/",
+      "name": "MonoQ",
+      "alternateName": [
+        "モノク",
+        "モノク株式会社"
+      ],
+      "inLanguage": "ja",
+      "publisher": {
+        "@id": "https://monoq.jp/#organization"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://monoq.jp/?s={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://monoq.jp/#webpage",
+      "url": "https://monoq.jp/",
+      "name": "MonoQ | エンジニアの実力を、正しく評価する。",
+      "isPartOf": {
+        "@id": "https://monoq.jp/#website"
+      },
+      "about": {
+        "@id": "https://monoq.jp/#organization"
+      },
+      "primaryImageOfPage": {
+        "@id": "https://monoq.jp/#founder-image"
+      },
+      "inLanguage": "ja",
+      "description": "MonoQは、AIコーディングテストを通じてエンジニアのスキルを客観的に可視化・定量化し、採用、配属、人材評価の意思決定を支援するモノク株式会社のIT人材評価サービスです。",
+      "mainEntity": [
+        {
+          "@id": "https://monoq.jp/#faq"
+        },
+        {
+          "@id": "https://monoq.jp/#service-monoq"
+        },
+        {
+          "@id": "https://monoq.jp/#service-ses"
+        }
+      ]
+    },
+    {
+      "@type": [
+        "Organization",
+        "LocalBusiness",
+        "ProfessionalService"
+      ],
+      "@id": "https://monoq.jp/#organization",
+      "name": "モノク株式会社",
+      "alternateName": [
+        "MonoQ, Inc.",
+        "MonoQ",
+        "モノク"
+      ],
+      "legalName": "モノク株式会社",
+      "url": "https://monoq.jp/",
+      "foundingDate": "2026-02-21",
+      "telephone": "+81-6-7878-6131",
+      "slogan": "エンジニアの実力を、正しく評価する。",
+      "description": "モノク株式会社は、システムエンジニアリングサービスとIT人材評価SaaS「MonoQ」を展開する大阪市中央区の企業です。AIコーディングテストを通じて、エンジニアの技術力や課題解決力を客観的に可視化し、企業の採用判断、配属判断、既存人材の評価を支援します。",
+      "logo": {
+        "@id": "https://monoq.jp/#logo"
+      },
+      "image": {
+        "@id": "https://monoq.jp/#founder-image"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "postalCode": "541-0054",
+        "addressRegion": "大阪府",
+        "addressLocality": "大阪市中央区",
+        "streetAddress": "南本町2丁目3-12 EDGE本町3F",
+        "addressCountry": "JP"
+      },
+      "areaServed": [
+        {
+          "@type": "Country",
+          "name": "日本"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "大阪府"
+        }
+      ],
+      "founder": {
+        "@id": "https://monoq.jp/#founder"
+      },
+      "employee": {
+        "@id": "https://monoq.jp/#founder"
+      },
+      "contactPoint": [
+        {
+          "@type": "ContactPoint",
+          "telephone": "+81-6-7878-6131",
+          "contactType": "customer support",
+          "areaServed": "JP",
+          "availableLanguage": [
+            "ja"
+          ]
+        },
+        {
+          "@type": "ContactPoint",
+          "contactType": "sales",
+          "areaServed": "JP",
+          "availableLanguage": [
+            "ja"
+          ]
+        }
+      ],
+      "makesOffer": [
+        {
+          "@id": "https://monoq.jp/#offer-ses"
+        },
+        {
+          "@id": "https://monoq.jp/#offer-monoq"
+        }
+      ]
+    },
+    {
+      "@type": "ImageObject",
+      "@id": "https://monoq.jp/#logo",
+      "name": "MonoQ logo",
+      "contentUrl": "https://monoq.jp/assets/logo.svg",
+      "representativeOfPage": true
+    },
+    {
+      "@type": "ImageObject",
+      "@id": "https://monoq.jp/#founder-image",
+      "name": "モノク株式会社 代表イメージ",
+      "contentUrl": "https://monoq.jp/uploads/monoq-founder-portrait.png"
+    },
+    {
+      "@type": "Person",
+      "@id": "https://monoq.jp/#founder",
+      "name": "新谷 涼花",
+      "jobTitle": "代表取締役",
+      "worksFor": {
+        "@id": "https://monoq.jp/#organization"
+      },
+      "affiliation": {
+        "@id": "https://monoq.jp/#organization"
+      },
+      "description": "モノク株式会社の代表取締役。AIコーディングテストとSES事業の知見を活かし、技術力が正しく評価される社会の実現を目指しています。"
+    },
+    {
+      "@type": "Offer",
+      "@id": "https://monoq.jp/#offer-ses",
+      "itemOffered": {
+        "@id": "https://monoq.jp/#service-ses"
+      },
+      "seller": {
+        "@id": "https://monoq.jp/#organization"
+      },
+      "areaServed": "JP",
+      "availability": "https://schema.org/InStock"
+    },
+    {
+      "@type": "Offer",
+      "@id": "https://monoq.jp/#offer-monoq",
+      "itemOffered": {
+        "@id": "https://monoq.jp/#service-monoq"
+      },
+      "seller": {
+        "@id": "https://monoq.jp/#organization"
+      },
+      "areaServed": "JP",
+      "availability": "https://schema.org/InStock"
+    },
+    {
+      "@type": "Service",
+      "@id": "https://monoq.jp/#service-ses",
+      "name": "システムエンジニアリングサービス",
+      "serviceType": "System Engineering Service",
+      "provider": {
+        "@id": "https://monoq.jp/#organization"
+      },
+      "areaServed": "JP",
+      "audience": [
+        {
+          "@type": "BusinessAudience",
+          "name": "開発プロジェクトを推進する企業"
+        },
+        {
+          "@type": "BusinessAudience",
+          "name": "Webサービス・システム開発の技術支援を必要とする企業"
+        }
+      ],
+      "description": "企業の開発プロジェクトに対して経験豊富なエンジニアを提供し、Webサービス開発やシステム開発を支援します。現場におけるスキル評価や人材配置の実態を捉え、評価基準の精度向上にも繋げます。",
+      "category": [
+        "システム開発",
+        "Webサービス開発",
+        "エンジニアリング支援",
+        "SES"
+      ]
+    },
+    {
+      "@type": "Service",
+      "@id": "https://monoq.jp/#service-monoq",
+      "name": "IT人材評価SaaS MonoQ",
+      "alternateName": "MonoQ",
+      "serviceType": "AI Coding Test and Engineer Skill Assessment SaaS",
+      "provider": {
+        "@id": "https://monoq.jp/#organization"
+      },
+      "areaServed": "JP",
+      "audience": [
+        {
+          "@type": "BusinessAudience",
+          "name": "エンジニア採用を行う企業"
+        },
+        {
+          "@type": "BusinessAudience",
+          "name": "既存エンジニアの評価や配属判断を行う企業"
+        },
+        {
+          "@type": "BusinessAudience",
+          "name": "IT人材の技術力を客観的に把握したい企業"
+        }
+      ],
+      "description": "MonoQは、AIコーディングテストを通じてエンジニアのスキルを客観的に可視化・定量化するIT人材評価SaaSです。テスト結果をスコア化し、技術力、課題解決力、採用時のスクリーニング、配属判断、既存人材評価などの意思決定に活用できます。",
+      "category": [
+        "IT人材評価",
+        "AIコーディングテスト",
+        "エンジニア採用",
+        "スキル可視化",
+        "人材配置",
+        "SaaS"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "MonoQ 活用領域",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "採用スクリーニング支援",
+              "description": "AIコーディングテストの結果をもとに、エンジニア採用時の候補者スクリーニングを支援します。"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "配属判断支援",
+              "description": "技術力や課題解決力のスコアを活用し、プロジェクトやチームへの配属判断を支援します。"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "既存人材評価支援",
+              "description": "既存エンジニアのスキルを定量的に把握し、評価や育成方針の検討に活用できます。"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://monoq.jp/#faq",
+      "inLanguage": "ja",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "MonoQでは、どのようにエンジニアのスキルを評価しますか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "AIコーディングテストを通じて、技術力や課題解決力をスコアとして可視化します。経歴や印象だけでは把握しづらい実力を、客観的な判断材料として扱えるようにすることを目指しています。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "採用活動以外にも活用できますか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "はい。採用時のスクリーニングだけでなく、配属判断、既存人材の評価、育成方針の検討など、エンジニアに関する様々な意思決定に活用できます。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "SES事業と評価SaaSはどのようにつながっていますか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "SES事業では、企業の開発現場を支援しながら、現場におけるスキル評価や人材配置の実態を捉えています。その知見を活かし、評価基準の精度向上とサービス開発につなげています。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "評価結果はどのような形で確認できますか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "テスト結果はスコアとして可視化され、技術力や課題解決力などを定量的に把握できます。企業が比較・検討しやすい評価材料として利用できる設計を想定しています。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "相談時に準備しておくものはありますか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "必須の資料はありません。採用や評価で課題に感じていること、開発体制や人材配置で困っていることがあれば、お問い合わせ内容に記載してください。"
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://monoq.jp/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Top",
+          "item": "https://monoq.jp/#top"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Vision",
+          "item": "https://monoq.jp/#vision"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Business",
+          "item": "https://monoq.jp/#business"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Company",
+          "item": "https://monoq.jp/#company"
+        },
+        {
+          "@type": "ListItem",
+          "position": 5,
+          "name": "Message",
+          "item": "https://monoq.jp/#message"
+        },
+        {
+          "@type": "ListItem",
+          "position": 6,
+          "name": "FAQ",
+          "item": "https://monoq.jp/#faq"
+        },
+        {
+          "@type": "ListItem",
+          "position": 7,
+          "name": "Contact",
+          "item": "https://monoq.jp/#contact"
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<div class="opening" id="opening" aria-hidden="true">
+  <svg class="op-logo" viewBox="0 0 600 167" role="img" aria-label="MonoQ">
+    <g>
+      <path class="logo-path st0" d="M195,0h-8c-5.11,3.92-7.42,10.43-1.52,15.01,10.31,8.01,21.48-7.99,9.52-15.01Z"/>
+      <path class="logo-path st0" d="M175.74,17.76c-8.17-3.55-12.97,6.19-17.74,10.24l-.09.04c-.29.11-1.1.25-1.91.96-.35.31-.64.7-1,1-1.68,1.41-7.77,7.16-9.36,6.89-2.57-2.13-4.14-4.53-6.64-6.89-4.15-3.92-7.27-6.79-12-10-6.62-4.49-10.56-6.37-18-9-10.56-3.74-12.41-3.48-23-4-14.93-.73-21.6-.73-36,5C25.58,21.71,2.96,48.41,0,75c-.84,7.5.61,16.33,0,24,2.63,14.8,8.44,28.86,18.03,40.47,10.73,12.99,20.77,18.5,35.97,24.53,1.5.59,4.07,2.39,6,3h11c4.26-2.53,5.4-8.38,3.05-12.55-2.13-3.78-13.33-5.49-18.05-7.45C3.87,125.38,3.79,49.87,56,28c10.93-4.58,21.14-5.72,33-5,6.64,1.75,14.71,2.92,21,6,2.23,1.09,13.34,7.77,15,9,.76.57,4.71,8.48,6.98,9.5.02.74-8.65,5.94-9.98,6.5-3.02,1.29-14.64,5.96-15,0,.03-.53-1.14-2.63-1.05-4.44.3-5.94,3.09-12.91-3.57-16.42-3.86-2.04-8.54-.95-11.24,2.5-4.24,5.42-8.59,17.65-13.13,24.37-16.12,23.86-5.5-7.97-13-14-12.02-9.66-18.31,16.71-23.18,24.32-4.72,7.38-20.49,16.83-12.4,25.75,9.18,10.13,20.1-9.69,26.18-15.04,2.35,1.4,3.88,2.63,6.4,3.96,8.52,4.52,14.51,2.35,21.51-4,1.46-1.33,1.65-3,2.49-4,1.44-1.71,3.52-3.87,4.84-5.61.98-1.29,1.94-2.74,2.18-4.38l1.45.02c2.22,2.61,3.6,3.57,6.53,4.98,7.77,3.73,12.26,2.14,20,0,6.78-1.87,10.07-4.12,16-7,1.21-.59,2.45-1.12,3.51-1.98,7.77,15.12,6.71,33.81.35,49.34-1.62,3.96-5.62,15.01-10.86,11.64-4.23-3.42-18.6-8.36-24-9-18.98-2.26-38.15,5.29-32.32,27.82,3.11,12.03,20.42,17.63,31.32,14.18,6.89-.1,8.07-1.14,14-3,5.2-1.63,7.52-3.06,12-5,9.23-3.98,8.66,2.55,15.25,5.24,6.74,2.75,13.51-1.08,12.74-8.65-.6-5.86-10.1-8.79-9.83-11.9.15-1.68,6.03-10.59,7.32-13.7,9.04-21.79,8.44-46.04-1.2-67.5.05-.61,7.48-7.42,8.71-8.49,4.54-3.93,11.1-7.78,15.02-12.76,3.78-4.81,2.33-11.05-3.27-13.48ZM99,141c-3.34-.05-10.44-1.48-8.9-6.34,1.04-3.27,9.1-2.91,11.9-2.66,4.82.42,10.27,2.89,15,4.01-1.07,2.4-4.75,2.43-7,2.99-2.91.72-8.22,2.04-11,2Z"/>
+    </g>
+    <g>
+      <path class="logo-path st3" d="M512.1,96.6c0,16.32-13.23,29.55-29.55,29.55s-29.55-13.23-29.55-29.55,13.23-29.55,29.55-29.55,29.55,13.23,29.55,29.55ZM499.21,96.63c0-9.21-7.47-16.68-16.68-16.68s-16.68,7.47-16.68,16.68,7.47,16.68,16.68,16.68,16.68-7.47,16.68-16.68Z"/>
+      <path class="logo-path st3" d="M373.58,96.6c0,16.34-13.24,29.58-29.58,29.58s-29.58-13.24-29.58-29.58,13.24-29.58,29.58-29.58,29.58,13.24,29.58,29.58ZM360.68,96.63c0-9.24-7.49-16.73-16.73-16.73s-16.73,7.49-16.73,16.73,7.49,16.73,16.73,16.73,16.73-7.49,16.73-16.73Z"/>
+      <path class="logo-path st2" d="M396.09,72.93c.84.6,6-2.88,7.87-3.46,15.21-4.71,34.26,3.97,37.96,20.1,1.56,6.82,1.72,21.83,1.11,28.97-.85,10.04-12,9.97-13.06.98-.84-7.15.8-15.79.02-23.02-2.23-20.65-31.65-21.3-33.99,2.01-.59,5.89,1.33,20.25-.53,24.47-1.71,3.87-8.32,4.29-10.54.58-3.59-5.99.62-42.64-.75-51.87,2.4-4.05,6.74-4.88,10.37-1.72,1.01.88,1.34,2.82,1.53,2.95Z"/>
+      <path class="logo-path st1" d="M304.05,58.46c-.14-1.1-1.77-5.6-2.33-6.2-.52-.57-1.51-.12-1.72-.26-4.57-2.92-5.89-2.34-10.45,1.05l-26.06,43.96c-1.82.03-2.72-2.16-3.51-3.49-8.2-13.65-15.7-27.8-24.28-41.22-6.38-4.37-13.02-1.81-13.74,6.15-1.82,19.99,1.43,42.73.07,63.02,1.08,4.07,5.17,5.75,8.96,4,.52-.24,4.02-3.69,4.02-3.98v-42c0-.58-2.97-4.46,1.45-1.45,3.94,5.08,20.51,37.98,23.54,39.47,2.65,1.3,6.23.28,7.87-2.15l23.14-38.36v44.5c0,3.72,7.25,6.25,11,2.5,1.41-1.41,2.09-2.33,2.02-4.47-1.8-19.16,2.32-42.43.02-61.07Z"/>
+      <path class="logo-path st1" d="M600,94v-14c-4.09-14.74-11.51-23.96-26-29-.07-.02-.3-.79-1-1-.54-.16-1.41.14-2,0-10.28-2.44-12.18-2.02-22,1-46.74,14.37-27.2,86.26,23.01,73.51,3.13-.79,11.76-5.62,12.44-5.57.51.04,2.08,5.92,7.81,4.91,1.84-.32,3.79-1.88,4.5-3.6,3.2-7.79-3.79-9.18-3.78-9.77.04-1.24,3.41-5.68,4.23-7.77,1.14-2.9.55-6.35,2.79-8.71ZM586.56,94.05c-.29,1.38-2.44,7.42-4.54,5.94-.26-.18-.83-3.91-3.73-4.78-8.21-2.45-12.97,4.27-7.76,10.77,1.17,1.46,4.16,1.91,3.46,3.5-22.42,12.74-47.23-10.03-35.87-33.86,12.75-26.75,55.12-13.82,48.43,18.43Z"/>
+    </g>
+  </svg>
+</div>
+
+<!-- ─── NAV ─────────────────────────────────── -->
+<nav class="gnav" id="gnav">
+  <a href="#top" class="gnav-logo">
+    <span class="gnav-mark" aria-hidden="true">
+      <svg viewBox="0 0 600 167" focusable="false">
+        <path class="logo-orange" d="M195,0h-8c-5.11,3.92-7.42,10.43-1.52,15.01,10.31,8.01,21.48-7.99,9.52-15.01Z"/>
+        <path class="logo-orange" d="M175.74,17.76c-8.17-3.55-12.97,6.19-17.74,10.24l-.09.04c-.29.11-1.1.25-1.91.96-.35.31-.64.7-1,1-1.68,1.41-7.77,7.16-9.36,6.89-2.57-2.13-4.14-4.53-6.64-6.89-4.15-3.92-7.27-6.79-12-10-6.62-4.49-10.56-6.37-18-9-10.56-3.74-12.41-3.48-23-4-14.93-.73-21.6-.73-36,5C25.58,21.71,2.96,48.41,0,75c-.84,7.5.61,16.33,0,24,2.63,14.8,8.44,28.86,18.03,40.47,10.73,12.99,20.77,18.5,35.97,24.53,1.5.59,4.07,2.39,6,3h11c4.26-2.53,5.4-8.38,3.05-12.55-2.13-3.78-13.33-5.49-18.05-7.45C3.87,125.38,3.79,49.87,56,28c10.93-4.58,21.14-5.72,33-5,6.64,1.75,14.71,2.92,21,6,2.23,1.09,13.34,7.77,15,9,.76.57,4.71,8.48,6.98,9.5.02.74-8.65,5.94-9.98,6.5-3.02,1.29-14.64,5.96-15,0,.03-.53-1.14-2.63-1.05-4.44.3-5.94,3.09-12.91-3.57-16.42-3.86-2.04-8.54-.95-11.24,2.5-4.24,5.42-8.59,17.65-13.13,24.37-16.12,23.86-5.5-7.97-13-14-12.02-9.66-18.31,16.71-23.18,24.32-4.72,7.38-20.49,16.83-12.4,25.75,9.18,10.13,20.1-9.69,26.18-15.04,2.35,1.4,3.88,2.63,6.4,3.96,8.52,4.52,14.51,2.35,21.51-4,1.46-1.33,1.65-3,2.49-4,1.44-1.71,3.52-3.87,4.84-5.61.98-1.29,1.94-2.74,2.18-4.38l1.45.02c2.22,2.61,3.6,3.57,6.53,4.98,7.77,3.73,12.26,2.14,20,0,6.78-1.87,10.07-4.12,16-7,1.21-.59,2.45-1.12,3.51-1.98,7.77,15.12,6.71,33.81.35,49.34-1.62,3.96-5.62,15.01-10.86,11.64-4.23-3.42-18.6-8.36-24-9-18.98-2.26-38.15,5.29-32.32,27.82,3.11,12.03,20.42,17.63,31.32,14.18,6.89-.1,8.07-1.14,14-3,5.2-1.63,7.52-3.06,12-5,9.23-3.98,8.66,2.55,15.25,5.24,6.74,2.75,13.51-1.08,12.74-8.65-.6-5.86-10.1-8.79-9.83-11.9.15-1.68,6.03-10.59,7.32-13.7,9.04-21.79,8.44-46.04-1.2-67.5.05-.61,7.48-7.42,8.71-8.49,4.54-3.93,11.1-7.78,15.02-12.76,3.78-4.81,2.33-11.05-3.27-13.48ZM99,141c-3.34-.05-10.44-1.48-8.9-6.34,1.04-3.27,9.1-2.91,11.9-2.66,4.82.42,10.27,2.89,15,4.01-1.07,2.4-4.75,2.43-7,2.99-2.91.72-8.22,2.04-11,2Z"/>
+        <path class="logo-blue" d="M512.1,96.6c0,16.32-13.23,29.55-29.55,29.55s-29.55-13.23-29.55-29.55,13.23-29.55,29.55-29.55,29.55,13.23,29.55,29.55ZM499.21,96.63c0-9.21-7.47-16.68-16.68-16.68s-16.68,7.47-16.68,16.68,7.47,16.68,16.68,16.68,16.68-7.47,16.68-16.68Z"/>
+        <path class="logo-blue" d="M373.58,96.6c0,16.34-13.24,29.58-29.58,29.58s-29.58-13.24-29.58-29.58,13.24-29.58,29.58-29.58,29.58,13.24,29.58,29.58ZM360.68,96.63c0-9.24-7.49-16.73-16.73-16.73s-16.73,7.49-16.73,16.73,7.49,16.73,16.73,16.73,16.73-7.49,16.73-16.73Z"/>
+        <path class="logo-blue" d="M396.09,72.93c.84.6,6-2.88,7.87-3.46,15.21-4.71,34.26,3.97,37.96,20.1,1.56,6.82,1.72,21.83,1.11,28.97-.85,10.04-12,9.97-13.06.98-.84-7.15.8-15.79.02-23.02-2.23-20.65-31.65-21.3-33.99,2.01-.59,5.89,1.33,20.25-.53,24.47-1.71,3.87-8.32,4.29-10.54.58-3.59-5.99.62-42.64-.75-51.87,2.4-4.05,6.74-4.88,10.37-1.72,1.01.88,1.34,2.82,1.53,2.95Z"/>
+        <path class="logo-blue" d="M304.05,58.46c-.14-1.1-1.77-5.6-2.33-6.2-.52-.57-1.51-.12-1.72-.26-4.57-2.92-5.89-2.34-10.45,1.05l-26.06,43.96c-1.82.03-2.72-2.16-3.51-3.49-8.2-13.65-15.7-27.8-24.28-41.22-6.38-4.37-13.02-1.81-13.74,6.15-1.82,19.99,1.43,42.73.07,63.02,1.08,4.07,5.17,5.75,8.96,4,.52-.24,4.02-3.69,4.02-3.98v-42c0-.58-2.97-4.46,1.45-1.45,3.94,5.08,20.51,37.98,23.54,39.47,2.65,1.3,6.23.28,7.87-2.15l23.14-38.36v44.5c0,3.72,7.25,6.25,11,2.5,1.41-1.41,2.09-2.33,2.02-4.47-1.8-19.16,2.32-42.43.02-61.07Z"/>
+        <path class="logo-blue" d="M600,94v-14c-4.09-14.74-11.51-23.96-26-29-.07-.02-.3-.79-1-1-.54-.16-1.41.14-2,0-10.28-2.44-12.18-2.02-22,1-46.74,14.37-27.2,86.26,23.01,73.51,3.13-.79,11.76-5.62,12.44-5.57.51.04,2.08,5.92,7.81,4.91,1.84-.32,3.79-1.88,4.5-3.6,3.2-7.79-3.79-9.18-3.78-9.77.04-1.24,3.41-5.68,4.23-7.77,1.14-2.9.55-6.35,2.79-8.71ZM586.56,94.05c-.29,1.38-2.44,7.42-4.54,5.94-.26-.18-.83-3.91-3.73-4.78-8.21-2.45-12.97,4.27-7.76,10.77,1.17,1.46,4.16,1.91,3.46,3.5-22.42,12.74-47.23-10.03-35.87-33.86,12.75-26.75,55.12-13.82,48.43,18.43Z"/>
+      </svg>
+    </span>
+  </a>
+  <ul>
+    <li><a href="#vision">Vision<sup>*</sup></a></li>
+    <li><a href="#business">Business</a></li>
+    <li><a href="#company">Company</a></li>
+    <li><a href="#message">Message</a></li>
+    <li><a href="#news">News</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <a href="#contact" class="gnav-cta">Contact <span class="svg-arrow" aria-hidden="true"></span></a>
+</nav>
+
+<!-- ─── HERO ───────────────────────────────── -->
+<section id="top" class="hero">
+  <div class="bgl" id="bgl"></div>
+  <div class="hero-inner">
+    <aside class="hero-side">
+      <div>./monoq</div><div>evaluate/</div><div>skills/</div>
+      <div>metrics/</div><div>reports/</div><div>teams/</div><div>docs/</div>
+      <div style="margin-top:18px;color:rgba(255,132,0,0.45)">v1.0</div>
+    </aside>
+
+    <div class="hero-main">
+      <div class="tm-outer">
+        <div class="tm">
+          <div class="tmbar">
+            <div class="ttraf">
+              <div class="ttl ttl-r"></div>
+              <div class="ttl ttl-y"></div>
+              <div class="ttl ttl-g"></div>
+            </div>
+            <div class="tmtitle">monoq-eval.sh — zsh — 142×38</div>
+            <div class="tconn"><div class="cdot"></div>CONNECTED</div>
+          </div>
+
+          <div class="cblock">
+            <div class="cl"><span class="ln">1</span><span class="sp">│</span><span class="c0">#!/usr/bin/env bash</span></div>
+            <div class="cl"><span class="ln">2</span><span class="sp">│</span><span class="c0"># monoq-skill.sh &nbsp;v1.0</span></div>
+            <div class="cl"><span class="ln">3</span><span class="sp">│</span></div>
+            <div class="cl"><span class="ln">4</span><span class="sp">│</span><span class="cv">TITLE</span><span class="cd">=</span><span class="cs">"エンジニアの実力を、正しく評価する。"</span></div>
+            <div class="cl"><span class="ln">5</span><span class="sp">│</span><span class="cv">DESC</span><span class="cd">=</span><span class="cs">"スキルを客観的に可視化する。"</span></div>
+            <div class="cl"><span class="ln">6</span><span class="sp">│</span></div>
+            <div class="cl"><span class="ln">7</span><span class="sp">│</span><span class="cf">eval_run</span><span class="cd">() {</span></div>
+            <div class="cl"><span class="ln">8</span><span class="sp">│</span>&nbsp;&nbsp;<span class="ck">bias</span> <span class="cd">--remove &&</span> <span class="ck">skill_matrix</span> <span class="cd">--init</span></div>
+            <div class="cl"><span class="ln">9</span><span class="sp">│</span>&nbsp;&nbsp;<span class="ck">printf</span> <span class="cd">'%s\n'</span> <span class="cx">"$TITLE"</span> <span class="cx">"$DESC"</span></div>
+            <div class="cl"><span class="ln">10</span><span class="sp">│</span><span class="cd">} &&</span> <span class="cf">eval_run</span> <span class="ch"># --reproducible</span></div>
+          </div>
+
+          <div class="runsec">
+            <div class="rcmd" id="rcmd"><span class="cbg"></span></div>
+            <div class="rhead" id="rhead"></div>
+            <div class="rsub" id="rsub"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-cta-row">
+        <div class="bmsg" id="bmsg"></div>
+        <a href="#vision" class="expl">
+          <span>事業内容を見る</span>
+          <span class="arrow" aria-hidden="true">arrow_right_alt</span>
+        </a>
+      </div>
+    </div>
+
+    <aside class="hero-right">
+      <div class="hrb">
+        <div class="hrc">$ git commit -m "redesign"</div>
+        <div class="hrd">Enumerating objects: 482</div>
+        <div class="hrd">Writing 1.24 MiB | done</div>
+        <div class="hrd" style="color:rgba(78,216,81,0.28);margin-top:4px">a3f1c2 main → main</div>
+      </div>
+      <div class="hrb">
+        <div class="hrh">&gt; SYSTEM_STATUS</div>
+        <div class="hri">■ eval-engine: <span>online</span></div>
+        <div class="hri">■ skill-matrix: <span>ready</span></div>
+        <div class="hri">■ bias-check: <span>passed</span></div>
+        <div class="hri">■ output: <span>reproducible</span></div>
+      </div>
+      <div class="mbox hrb">
+        <div class="mh">MISSION</div>
+        <div class="mt">属人性を排除し<br/>スキルで語れる<br/>評価基準をつくる</div>
+      </div>
+      <div class="hrb">
+        <div class="pc">$ ./evaluation --run</div>
+        <div class="pb">Progress: [<span id="pf"></span>] <span id="pp">0%</span></div>
+        <div class="pr" id="pr">Result: Bias Removed. ✔</div>
+        <div class="hrd" style="margin-top:5px">$ <span class="cbs"></span></div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="hero-bf">64 bytes from skill.monoq.jp: icmp_seq=1 ttl=64 time=0.09 ms &nbsp;&nbsp; icmp_seq=2 time=0.11 ms &nbsp;&nbsp; icmp_seq=3 time=0.10 ms &nbsp;&nbsp; icmp_seq=4 time=0.10 ms</div>
+</section>
+
+<!-- ─── VISION ─────────────────────────── -->
+<section id="vision" class="sec">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="reveal">
+        <div class="sec-num"><span class="grad-bar"></span><span class="big"><b>01</b> &nbsp;— &nbsp;VISION</span></div>
+        <div class="label">企業理念</div>
+      </div>
+      <h2 class="sec-title reveal d1">評価が変われば、<br/><em>市場は変わる。</em></h2>
+    </header>
+
+    <p class="vis-quote reveal">エンジニアの価値は、経歴や印象ではなく<br/><em>スキルによって</em>評価されるべきです</p>
+
+    <div class="vis-pillars">
+      <article class="pillar reveal">
+        <div class="pillar-num">P / 01 — Skill Value</div>
+        <h3>価値を、<br/>スキルで捉える。</h3>
+        <p>評価は属人的で曖昧なまま運用されるべきではありません。エンジニアの実力を、観測できるスキルとして正しく伝える構造をつくります。</p>
+        <div class="pillar-arrow">↗</div>
+      </article>
+      <article class="pillar reveal d1">
+        <div class="pillar-num">P / 02 — Market Fit</div>
+        <h3>見落とされる<br/>人材をなくす。</h3>
+        <p>本来であれば適切に評価されるべき人材が見落とされる状況を変え、企業と人材のより良い意思決定につなげます。</p>
+        <div class="pillar-arrow">↗</div>
+      </article>
+      <article class="pillar reveal d2">
+        <div class="pillar-num">P / 03 — Reproducible</div>
+        <h3>再現性のある<br/>評価へ。</h3>
+        <p>モノクは、スキルを基準とした再現性のある評価によって、評価の曖昧さが生む構造的な課題を変えていきます。</p>
+        <div class="pillar-arrow">↗</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ─── BUSINESS ──────────────────────────── -->
+<section id="business" class="sec">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="reveal">
+        <div class="sec-num"><span class="grad-bar"></span><span class="big"><b>02</b> &nbsp;— &nbsp;BUSINESS</span></div>
+        <div class="label">事業内容</div>
+      </div>
+      <h2 class="sec-title reveal d1">エンジニアの実力を、<br/><em>事業で証明する。</em></h2>
+    </header>
+
+    <div class="biz-list compact">
+      <article class="biz-row reveal">
+        <div class="biz-no"><b>01</b></div>
+        <div class="biz-name">システムエンジニアリングサービス<small>System Engineering Service</small></div>
+        <div class="biz-desc">企業の開発プロジェクトに対して、経験豊富なエンジニアを提供し開発支援を行っています。Webサービスの開発やシステム開発において技術支援を行うとともに、現場におけるスキル評価や人材配置の実態を捉え、評価基準の精度向上に繋げています。</div>
+        <div class="biz-arrow"></div>
+      </article>
+      <article class="biz-row reveal">
+        <div class="biz-no"><b>02</b></div>
+        <div class="biz-name">IT人材評価SaaS<small>MonoQ</small></div>
+        <div class="biz-desc">MonoQはAIコーディングテストを通じて、エンジニアのスキルを客観的に可視化・定量化する評価サービスです。テスト結果はスコアとして可視化され、技術力や課題解決力などを定量的に把握できます。採用時のスクリーニングや配属判断、既存人材の評価など、様々な意思決定に活用できます。</div>
+        <div class="biz-arrow"></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ─── COMPANY ───────────────────────────── -->
+<section id="company" class="sec">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="reveal">
+        <div class="sec-num"><span class="grad-bar"></span><span class="big"><b>03</b> &nbsp;— &nbsp;COMPANY</span></div>
+        <div class="label">会社概要</div>
+      </div>
+      <h2 class="sec-title reveal d1">技術力が、<br/><em>正しく届く</em>会社へ。</h2>
+    </header>
+
+    <div class="co-grid">
+      <dl class="co-table reveal">
+        <div class="co-row"><dt>社名</dt><dd><b>モノク株式会社</b> &nbsp; / &nbsp; <span class="mono" style="font-size:12px;color:var(--fg-3)">MonoQ, Inc.</span></dd></div>
+        <div class="co-row"><dt>設立</dt><dd>2026年2月21日</dd></div>
+        <div class="co-row"><dt>所在地</dt><dd>〒541-0054<br/>大阪府大阪市中央区南本町2丁目3-12<br/>EDGE本町3F</dd></div>
+        <div class="co-row"><dt>電話</dt><dd><a href="tel:0678786131">06-7878-6131</a></dd></div>
+        <div class="co-row"><dt>代表者</dt><dd>代表取締役　新谷 涼花</dd></div>
+        <div class="co-row"><dt>事業内容</dt><dd>システムエンジニアリングサービス<br/>サービス開発</dd></div>
+      </dl>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── MESSAGE ───────────────────────────── -->
+<section id="message" class="sec">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="reveal">
+        <div class="sec-num"><span class="grad-bar"></span><span class="big"><b>04</b> &nbsp;— &nbsp;MESSAGE</span></div>
+        <div class="label">代表挨拶</div>
+      </div>
+      <h2 class="sec-title reveal d1">エンジニアの実力を、<br/><em>正しく評価する。</em></h2>
+    </header>
+
+    <div class="msg-grid">
+      <div class="msg-portrait reveal">
+        <div class="msg-portrait-cap"><b>新谷 涼花</b>代表取締役 &nbsp;/ &nbsp;Founder</div>
+      </div>
+      <div class="msg-body reveal d1">
+        <p class="quote">技術力が正しく評価される<br/>社会を実現すること。<br/>それが、私たち<em>MonoQ</em>の<br/>目指す未来です。</p>
+        <p>IT業界において、エンジニアの評価はこれまで経験年数や印象、限られた面接の時間に依存することも少なくありませんでした。しかし本来、エンジニアの価値は「実際にどのような技術力を持っているのか」によって正しく評価されるべきだと、私たちは考えています。</p>
+        <p>MonoQは、AIコーディングテストを通じてエンジニアのスキルを客観的に可視化し、企業がより適切な人材評価や採用判断を行える仕組みを提供します。</p>
+        <p>また、SES事業を通じて企業の開発現場を支援する中で得た知見を活かし、エンジニアと企業の双方にとってより良い関係を築ける環境づくりにも取り組んでいます。</p>
+        <div class="msg-sig">
+          <div class="name">新谷 涼花<small>representative director &nbsp;— &nbsp;monoq inc.</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── NEWS ─────────────────────────────── -->
+<section id="news" class="sec">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="reveal">
+        <div class="sec-num"><span class="grad-bar"></span><span class="big"><b>05</b> &nbsp;— &nbsp;NEWS</span></div>
+        <div class="label">お知らせ</div>
+      </div>
+      <h2 class="sec-title reveal d1">最新の動向と、<br/><em>取り組みについて。</em></h2>
+    </header>
+
+    <div class="news-grid">
+      <article class="news-card reveal">
+        <a href="#" class="news-link">
+          <div class="news-thumb">
+            <img src="https://picsum.photos/seed/monoq-news-01/800/500" alt="" loading="lazy" />
+            <div class="news-cat is-accent">Release</div>
+          </div>
+          <div class="news-meta">
+            <time class="news-date" datetime="2026-05-20">2026.05.20</time>
+            <span class="dot"></span>
+            <span class="news-tag">プロダクト</span>
+          </div>
+          <h3 class="news-title">新サービス「MonoQ Skill Matrix」を正式ローンチしました</h3>
+          <p class="news-excerpt">AIコーディングテストとスキルマトリクスを統合した新サービスの提供を開始しました。エンジニア評価における新たな標準として、技術力の可視化を実現します。</p>
+          <span class="news-readmore">続きを読む <span class="svg-arrow" aria-hidden="true"></span></span>
+        </a>
+      </article>
+
+      <article class="news-card reveal d1">
+        <a href="#" class="news-link">
+          <div class="news-thumb">
+            <img src="https://picsum.photos/seed/monoq-news-02/800/500" alt="" loading="lazy" />
+            <div class="news-cat">Report</div>
+          </div>
+          <div class="news-meta">
+            <time class="news-date" datetime="2026-05-12">2026.05.12</time>
+            <span class="dot"></span>
+            <span class="news-tag">リサーチ</span>
+          </div>
+          <h3 class="news-title">2026年エンジニア採用市場レポートを公開</h3>
+          <p class="news-excerpt">国内主要企業500社を対象にしたエンジニア採用動向調査の結果をまとめました。スキルベース評価の導入が加速する背景を分析しています。</p>
+          <span class="news-readmore">続きを読む <span class="svg-arrow" aria-hidden="true"></span></span>
+        </a>
+      </article>
+
+      <article class="news-card reveal d2">
+        <a href="#" class="news-link">
+          <div class="news-thumb">
+            <img src="https://picsum.photos/seed/monoq-news-03/800/500" alt="" loading="lazy" />
+            <div class="news-cat">Media</div>
+          </div>
+          <div class="news-meta">
+            <time class="news-date" datetime="2026-04-15">2026.04.15</time>
+            <span class="dot"></span>
+            <span class="news-tag">掲載情報</span>
+          </div>
+          <h3 class="news-title">「日経xTECH」に代表・新谷涼花のインタビューが掲載されました</h3>
+          <p class="news-excerpt">日経BPが運営する「日経xTECH」にて、当社代表取締役・新谷涼花のインタビュー記事が掲載されました。スキル評価の未来について語っています。</p>
+          <span class="news-readmore">続きを読む <span class="svg-arrow" aria-hidden="true"></span></span>
+        </a>
+      </article>
+
+      <article class="news-card reveal">
+        <a href="#" class="news-link">
+          <div class="news-thumb">
+            <img src="https://picsum.photos/seed/monoq-news-04/800/500" alt="" loading="lazy" />
+            <div class="news-cat">Insight</div>
+          </div>
+          <div class="news-meta">
+            <time class="news-date" datetime="2026-03-30">2026.03.30</time>
+            <span class="dot"></span>
+            <span class="news-tag">考察</span>
+          </div>
+          <h3 class="news-title">スキル評価における属人性の構造的課題について</h3>
+          <p class="news-excerpt">なぜエンジニアの評価は属人化しやすいのか。その背景にある構造的な要因と、再現性のある評価をつくるために私たちが取り組む解決策を解説します。</p>
+          <span class="news-readmore">続きを読む <span class="svg-arrow" aria-hidden="true"></span></span>
+        </a>
+      </article>
+
+      <article class="news-card reveal d1">
+        <a href="#" class="news-link">
+          <div class="news-thumb">
+            <img src="https://picsum.photos/seed/monoq-news-05/800/500" alt="" loading="lazy" />
+            <div class="news-cat">Company</div>
+          </div>
+          <div class="news-meta">
+            <time class="news-date" datetime="2026-03-10">2026.03.10</time>
+            <span class="dot"></span>
+            <span class="news-tag">お知らせ</span>
+          </div>
+          <h3 class="news-title">大阪・EDGE本町に本社オフィスを開設しました</h3>
+          <p class="news-excerpt">事業拡大に伴い、本社オフィスを大阪市中央区南本町のEDGE本町3Fに移転しました。スタートアップ集積地で、より迅速な意思決定と連携を進めます。</p>
+          <span class="news-readmore">続きを読む <span class="svg-arrow" aria-hidden="true"></span></span>
+        </a>
+      </article>
+
+      <article class="news-card reveal d2">
+        <a href="#" class="news-link">
+          <div class="news-thumb">
+            <img src="https://picsum.photos/seed/monoq-news-06/800/500" alt="" loading="lazy" />
+            <div class="news-cat">Company</div>
+          </div>
+          <div class="news-meta">
+            <time class="news-date" datetime="2026-02-21">2026.02.21</time>
+            <span class="dot"></span>
+            <span class="news-tag">お知らせ</span>
+          </div>
+          <h3 class="news-title">モノク株式会社を設立しました</h3>
+          <p class="news-excerpt">本日、エンジニアの実力を正しく評価する社会の実現を目指し、モノク株式会社を設立いたしました。評価の曖昧さが生む構造的な課題に向き合います。</p>
+          <span class="news-readmore">続きを読む <span class="svg-arrow" aria-hidden="true"></span></span>
+        </a>
+      </article>
+    </div>
+
+    <div class="news-foot reveal">
+      <a href="#" class="news-all">
+        <span>すべてのお知らせを見る</span>
+        <span class="svg-arrow" aria-hidden="true"></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FAQ ───────────────────────────────── -->
+<section id="faq" class="sec">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="reveal">
+        <div class="sec-num"><span class="grad-bar"></span><span class="big"><b>06</b> &nbsp;— &nbsp;FAQ</span></div>
+        <div class="label">よくある質問</div>
+      </div>
+      <h2 class="sec-title reveal d1">導入前の疑問に、<br/><em>まっすぐ答える。</em></h2>
+    </header>
+
+    <div class="faq-list" id="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" type="button">
+          <span class="qnum">Q / 01</span>
+          <span class="qtxt">MonoQでは、どのようにエンジニアのスキルを評価しますか？</span>
+          <span class="qico"></span>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner"><p class="body">AIコーディングテストを通じて、技術力や課題解決力をスコアとして可視化します。経歴や印象だけでは把握しづらい実力を、客観的な判断材料として扱えるようにすることを目指しています。</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">
+          <span class="qnum">Q / 02</span>
+          <span class="qtxt">採用活動以外にも活用できますか？</span>
+          <span class="qico"></span>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner"><p class="body">はい。採用時のスクリーニングだけでなく、配属判断、既存人材の評価、育成方針の検討など、エンジニアに関する様々な意思決定に活用できます。</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">
+          <span class="qnum">Q / 03</span>
+          <span class="qtxt">SES事業と評価SaaSはどのようにつながっていますか？</span>
+          <span class="qico"></span>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner"><p class="body">SES事業では、企業の開発現場を支援しながら、現場におけるスキル評価や人材配置の実態を捉えています。その知見を活かし、評価基準の精度向上とサービス開発につなげています。</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">
+          <span class="qnum">Q / 04</span>
+          <span class="qtxt">評価結果はどのような形で確認できますか？</span>
+          <span class="qico"></span>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner"><p class="body">テスト結果はスコアとして可視化され、技術力や課題解決力などを定量的に把握できます。企業が比較・検討しやすい評価材料として利用できる設計を想定しています。</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">
+          <span class="qnum">Q / 05</span>
+          <span class="qtxt">相談時に準備しておくものはありますか？</span>
+          <span class="qico"></span>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner"><p class="body">必須の資料はありません。採用や評価で課題に感じていること、開発体制や人材配置で困っていることがあれば、お問い合わせ内容に記載してください。</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CONTACT ──────────────────────────── -->
+<section id="contact" class="sec">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="reveal">
+        <div class="sec-num"><span class="grad-bar"></span><span class="big"><b>07</b> &nbsp;— &nbsp;CONTACT</span></div>
+        <div class="label">お問い合わせ</div>
+      </div>
+      <h2 class="sec-title reveal d1">ご相談は、<br/><em>こちらから。</em></h2>
+    </header>
+
+    <div class="ct-grid">
+      <form class="ct-form reveal" onsubmit="event.preventDefault();alert('お問い合わせを受け付けました')">
+        <div class="ct-row">
+          <div class="ct-field">
+            <label>法人名<span class="req">*</span></label>
+            <input type="text" placeholder="モノク株式会社" required />
+          </div>
+          <div class="ct-field">
+            <label>氏名<span class="req">*</span></label>
+            <input type="text" placeholder="山田 太郎" required />
+          </div>
+        </div>
+        <div class="ct-row">
+          <div class="ct-field">
+            <label>電話番号<span class="req">*</span></label>
+            <input type="tel" placeholder="06-7878-6131" required />
+          </div>
+          <div class="ct-field">
+            <label>メールアドレス<span class="req">*</span></label>
+            <input type="email" placeholder="name@company.com" required />
+          </div>
+        </div>
+        <div class="ct-field">
+          <label>お問い合わせ内容</label>
+          <textarea placeholder="お問い合わせ内容をご入力ください。"></textarea>
+        </div>
+        <label class="privacy-check">
+          <input type="checkbox" required />
+          <span><a href="#">プライバシーポリシーを確認する</a> / プライバシーポリシーに同意する。</span>
+        </label>
+        <button type="submit" class="ct-submit">送信 <span class="plane" aria-hidden="true"></span></button>
+      </form>
+
+      <aside class="ct-info reveal d1">
+        <h4>モノク株式会社</h4>
+        <div>〒541-0054<br/>大阪府大阪市中央区南本町2丁目3-12<br/>EDGE本町3F</div>
+        <h4>連絡先</h4>
+        <div><a href="tel:0678786131">06-7878-6131</a></div>
+        <h4>事業内容</h4>
+        <div>システムエンジニアリングサービス<br/>サービス開発</div>
+        <div class="term">
+$ ssh contact@monoq.jp<br/>
+MonoQ contact form ready.<br/>
+Please send your message.<br/>
+<span style="color:rgba(255,132,0,0.7)">$ _</span>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <div class="wrap">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <div class="foot-logo">
+            <span class="foot-mark">Q</span>
+            <span>MonoQ</span>
+          </div>
+          <p>エンジニアの実力を、正しく評価する。<br/>モノク株式会社 &nbsp;/ &nbsp;MonoQ, Inc.</p>
+        </div>
+        <div class="foot-cols">
+          <div>
+            <h5>Business</h5>
+            <ul>
+              <li><a href="#business">システムエンジニアリングサービス</a></li>
+              <li><a href="#business">IT人材評価SaaS</a></li>
+            </ul>
+          </div>
+          <div>
+            <h5>Company</h5>
+            <ul>
+              <li><a href="#company">会社概要</a></li>
+              <li><a href="#message">代表挨拶</a></li>
+            </ul>
+          </div>
+          <div>
+            <h5>News</h5>
+            <ul>
+              <li><a href="#news">最新のお知らせ</a></li>
+              <li><a href="#news">プロダクト</a></li>
+              <li><a href="#news">掲載情報</a></li>
+            </ul>
+          </div>
+          <div>
+            <h5>Contact</h5>
+            <ul>
+              <li><a href="#faq">FAQ</a></li>
+              <li><a href="#contact">お問い合わせ</a></li>
+              <li><a href="#">プライバシーポリシー</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="foot-bot">
+        <div class="copy">© 2026 MonoQ, Inc. All rights reserved.</div>
+        <div class="stat">monoq.jp — contact ready</div>
+      </div>
+    </div>
+  </footer>
+</section>
+
+<!-- ─── Tweaks mount ────────────── -->
+<div id="tweaks-root"></div>
+
+<script>
+/* Opening */
+(function(){
+  const opening=document.getElementById('opening');
+  if(!opening) return;
+  const finish=()=>{
+    opening.animate(
+      [{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(1.02)'}],
+      {duration:520,easing:'cubic-bezier(.2,.7,.2,1)',fill:'forwards'}
+    ).onfinish=()=>opening.remove();
+  };
+  if(!window.anime){
+    setTimeout(finish,1200);
+    return;
+  }
+  anime.set('.op-logo .logo-path', {
+    opacity:0,
+    scale:.92,
+    translateX:0
+  });
+  anime.set('.op-logo .st0', {
+    rotate:-18,
+    scale:.72
+  });
+  anime.set('.op-logo .st1, .op-logo .st2, .op-logo .st3', {
+    translateX:-22,
+    scale:.94
+  });
+  const tl=anime.timeline({easing:'easeInOutSine'});
+  tl
+    .add({
+      targets:'.op-logo .st0',
+      opacity:[0,1],
+      scale:[.72,1],
+      rotate:[-18,0],
+      duration:760,
+      delay:anime.stagger(120),
+      easing:'easeOutElastic(1, .65)'
+    })
+    .add({
+      targets:'.op-logo .st1, .op-logo .st2, .op-logo .st3',
+      opacity:[0,1],
+      translateX:[-22,0],
+      scale:[.94,1],
+      duration:860,
+      delay:anime.stagger(70),
+      easing:'easeOutElastic(1, .55)'
+    },'-=340')
+    .add({
+      targets:'.op-logo',
+      scale:[1,1.018,1],
+      duration:420,
+      easing:'easeInOutQuad',
+      complete:()=>setTimeout(finish,360)
+    });
+})();
+
+/* ─── HERO ANIM (ported from source) ─────────────────── */
+(function(){
+  const lines=[
+    '#!/usr/bin/env bash','# monoq-skill.sh v1.0',
+    "TITLE='エンジニアの実力を'",'eval_run() {',
+    "  printf '%s\\n' \"$TITLE\"",'  bias --remove && skill_matrix --init',
+    '}','if [ -z "$BIAS" ]; then eval_run; fi',
+    'for eng in "${TEAM[@]}"; do evaluate "$eng"; done',
+    '$ monoq test --engineer profile.json',
+    '$ monoq score --visualize skill.json',
+    'SELECT skill,level FROM engineers WHERE bias=0;',
+    "git commit -m 'visualize engineer skill'",'kubectl apply -f eval-deploy.yaml',
+    'const test = new CodingTest();',
+    'await test.score({ profile: engineer });',
+    'import { SkillScore } from "@monoq/core";',
+  ];
+  const bgl=document.getElementById('bgl');
+  [{l:'1%',d:34,t:0,g:1},{l:'13%',d:27,t:-10,g:0},{l:'28%',d:40,t:-18,g:1},
+   {l:'46%',d:30,t:-5,g:0},{l:'62%',d:36,t:-23,g:2},{l:'76%',d:28,t:-14,g:0},{l:'91%',d:33,t:-8,g:1}
+  ].forEach(c=>{
+    const el=document.createElement('div');
+    el.className='bgc';
+    const col = c.g===2 ? 'rgba(255,132,0,0.05)' : (c.g===1 ? 'rgba(78,216,81,0.07)' : 'rgba(129,208,215,0.05)');
+    el.style.cssText=`left:${c.l};animation-duration:${c.d}s;animation-delay:${c.t}s;color:${col}`;
+    let t='';for(let i=0;i<55;i++)t+=lines[Math.floor(Math.random()*lines.length)]+'\n';
+    el.textContent=t+t;bgl.appendChild(el);
+  });
+
+  const rcmd=document.getElementById('rcmd'),rhead=document.getElementById('rhead'),
+        rsub=document.getElementById('rsub'),bmsg=document.getElementById('bmsg');
+  const CMD='$ bash monoq-skill.sh';
+  const HEAD='エンジニアの実力を、\n<span class="em">正しく評価する。</span>';
+  const SUB='AIコーディングテストでスキルを可視化し、\n採用と評価の意思決定を支える。';
+  const BODY='モノクは、技術力が正しく評価される社会をつくります。';
+
+  function typ(el,text,spd,cur,done,allowHtml,keepCursor){
+    let i=0;el.innerHTML=`<span class="${cur}"></span>`;
+    const raw = text;
+    (function t(){
+      if(i<raw.length){
+        // handle <span class="em">...</span> chunk atomically
+        if(allowHtml && raw.substr(i,4)==='<spa'){
+          const close = raw.indexOf('</span>',i);
+          if(close>-1){
+            const chunk = raw.substring(i, close+7);
+            let c=el.innerHTML.replace(/<span class="(cbg|cbt|cbs)"[^>]*><\/span>/g,'');
+            c+=chunk;
+            el.innerHTML=c+`<span class="${cur}"></span>`;
+            i = close+7;
+            setTimeout(t,spd*2);
+            return;
+          }
+        }
+        const ch=raw[i++];
+        let c=el.innerHTML.replace(/<span class="(cbg|cbt|cbs)"[^>]*><\/span>/g,'');
+        c+=ch==='\n'?'<br>':ch;
+        el.innerHTML=c+`<span class="${cur}"></span>`;
+        setTimeout(t,spd+Math.random()*spd*.5);
+      } else {
+        if(!keepCursor){
+          el.innerHTML=el.innerHTML.replace(/<span class="(cbg|cbt|cbs)"[^>]*><\/span>/g,'');
+        }
+        done&&done();
+      }
+    })();
+  }
+
+  const heroStartDelay=document.getElementById('opening') ? 2100 : 700;
+  setTimeout(()=>{
+    typ(rcmd,CMD,40,'cbg',()=>{
+      setTimeout(()=>{
+        typ(rhead,HEAD,82,'cbg',()=>{
+          setTimeout(()=>{
+            typ(rsub,SUB,32,'cbt',()=>{
+              setTimeout(()=>{typ(bmsg,BODY,26,'cbs',()=>{},false,true);},300);
+            });
+          },200);
+        },true);
+      },350);
+    });
+  },heroStartDelay);
+
+  const pf=document.getElementById('pf'),pp=document.getElementById('pp'),pr=document.getElementById('pr');
+  let p=0;
+  setTimeout(function go(){
+    if(p<=18){pf.textContent='='.repeat(p)+(p<18?'>':'');pp.textContent=Math.round(p/18*100)+'%';p++;setTimeout(go,175);}
+    else pr.style.opacity='1';
+  },heroStartDelay+1700);
+})();
+
+/* ─── NAV SHADOW ON SCROLL ───────────────────────────── */
+(function(){
+  const nav=document.getElementById('gnav');
+  const onScroll=()=>{
+    if(window.scrollY > 80) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  };
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+})();
+
+/* ─── SCROLL REVEAL ──────────────────────────────────── */
+(function(){
+  const els=document.querySelectorAll('.reveal');
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:0.1,rootMargin:'0px 0px -8% 0px'});
+  els.forEach(el=>io.observe(el));
+})();
+
+/* ─── FAQ ACCORDION ──────────────────────────────────── */
+(function(){
+  document.querySelectorAll('#faq-list .faq-item').forEach((item,i)=>{
+    const btn=item.querySelector('.faq-q');
+    btn.addEventListener('click',()=>{
+      // close others
+      document.querySelectorAll('#faq-list .faq-item').forEach(o=>{ if(o!==item) o.classList.remove('open'); });
+      item.classList.toggle('open');
+    });
+    if(i===0) item.classList.add('open'); // open first by default
+  });
+})();
+
+/* Contact paper plane */
+(function(){
+  document.querySelectorAll('.ct-submit').forEach(btn=>{
+    let timer;
+    const fly=()=>{
+      btn.classList.remove('plane-active');
+      void btn.offsetWidth;
+      btn.classList.add('plane-active');
+      clearTimeout(timer);
+      timer=setTimeout(()=>btn.classList.remove('plane-active'),3400);
+    };
+    btn.addEventListener('mouseenter',fly);
+    btn.addEventListener('focus',fly);
+  });
+})();
+</script>
+
+<!-- Tweaks panel app -->
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "palette": "#f4f1ea",
+  "headingFont": "zen-kaku",
+  "accentIntensity": "balanced"
+}/*EDITMODE-END*/;
+
+const PALETTES = {
+  "#f4f1ea":  { bg: "#f4f1ea", bgAlt: "#ebe6db", fg: "#0d0e0c", line: "rgba(13,14,12,0.10)", line2: "rgba(13,14,12,0.18)" },
+  "#ffffff":  { bg: "#ffffff", bgAlt: "#f4f4f4", fg: "#0a0a0a", line: "rgba(0,0,0,0.08)",   line2: "rgba(0,0,0,0.15)" },
+  "#e9e7e1":  { bg: "#e9e7e1", bgAlt: "#dcd9d1", fg: "#15171a", line: "rgba(0,0,0,0.10)",   line2: "rgba(0,0,0,0.18)" },
+  "#15171a":  { bg: "#15171a", bgAlt: "#1f2125", fg: "#f4f1ea", line: "rgba(255,255,255,0.10)", line2: "rgba(255,255,255,0.18)" }
+};
+
+const HEAD_FONTS = {
+  "zen-kaku": '"Zen Kaku Gothic New", sans-serif',
+  "serif":    '"Noto Serif JP", serif',
+  "mono":     '"Noto Sans Mono", monospace'
+};
+
+const ACCENTS = {
+  subtle:   "linear-gradient(90deg, #ff9933, #ff6a2a)",
+  balanced: "linear-gradient(90deg, #ff8400, #ff4c00)",
+  bold:     "linear-gradient(90deg, #ffae00, #ff2a00)"
+};
+
+function App(){
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+  React.useEffect(()=>{
+    const r = document.documentElement;
+    const p = PALETTES[t.palette] || PALETTES["#f4f1ea"];
+    r.style.setProperty('--bg', p.bg);
+    r.style.setProperty('--bg-alt', p.bgAlt);
+    r.style.setProperty('--fg', p.fg);
+    r.style.setProperty('--line', p.line);
+    r.style.setProperty('--line-2', p.line2);
+    const isDark = t.palette === "#15171a";
+    r.style.setProperty('--fg-2', isDark ? "rgba(244,241,234,0.85)" : "#2a2c28");
+    r.style.setProperty('--fg-3', isDark ? "rgba(244,241,234,0.65)" : "#5b5e57");
+    r.style.setProperty('--fg-4', isDark ? "rgba(244,241,234,0.4)"  : "#8f928a");
+
+    r.style.setProperty('--accent-grad', ACCENTS[t.accentIntensity] || ACCENTS.balanced);
+
+    // heading font swap
+    const font = HEAD_FONTS[t.headingFont] || HEAD_FONTS["zen-kaku"];
+    document.querySelectorAll('h2.sec-title, .pillar h3, .biz-name, .msg-body .quote, .faq-q .qtxt').forEach(el=>{
+      el.style.fontFamily = font;
+    });
+  }, [t]);
+
+  return (
+    <TweaksPanel title="Tweaks">
+      <TweakSection label="Palette" />
+      <TweakColor
+        label="Page background"
+        value={t.palette}
+        options={['#f4f1ea','#ffffff','#e9e7e1','#15171a']}
+        onChange={(v)=>setTweak('palette', v)}
+      />
+      <TweakRadio
+        label="Accent intensity"
+        value={t.accentIntensity}
+        options={['subtle','balanced','bold']}
+        onChange={(v)=>setTweak('accentIntensity', v)}
+      />
+
+      <TweakSection label="Typography" />
+      <TweakSelect
+        label="Heading font"
+        value={t.headingFont}
+        options={[
+          {value:'zen-kaku', label:'Zen Kaku Gothic'},
+          {value:'serif',    label:'Noto Serif JP'},
+          {value:'mono',     label:'Noto Sans Mono'}
+        ]}
+        onChange={(v)=>setTweak('headingFont', v)}
+      />
+    </TweaksPanel>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('tweaks-root'));
+root.render(<App />);
+</script>
+
+</body>
+</html>

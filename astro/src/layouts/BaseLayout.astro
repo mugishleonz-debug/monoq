@@ -1,0 +1,417 @@
+---
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import Opening from '../components/Opening.astro';
+import Nav from '../components/Nav.astro';
+import TweaksPanel from '../components/TweaksPanel.jsx';
+---
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow, noarchive" />
+<title>MonoQ — エンジニアの実力を、正しく評価する。</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Noto+Sans+Mono:wght@400;500;600;700&family=Noto+Serif+JP:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_right_alt" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="alternate icon" type="image/png" href="/favicon.png" />
+<link rel="apple-touch-icon" href="/favicon.png" />
+
+<!-- Google Tag Manager -->
+<script is:inline>
+  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-NXHD6FND');
+</script>
+<!-- End Google Tag Manager -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js" is:inline></script>
+<script src="https://www.google.com/recaptcha/api.js?render=6LdBbgYtAAAAANyIZYbYfY7eeUE1bpXls-5FUpCS" is:inline></script>
+<ClientRouter fallback="animate" />
+
+<script type="application/ld+json" id="monoq-schema" is:inline set:html={`
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://monoq.jp/#website",
+      "url": "https://monoq.jp/",
+      "name": "MonoQ",
+      "alternateName": [
+        "モノク",
+        "モノク株式会社"
+      ],
+      "inLanguage": "ja",
+      "publisher": {
+        "@id": "https://monoq.jp/#organization"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://monoq.jp/?s={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://monoq.jp/#webpage",
+      "url": "https://monoq.jp/",
+      "name": "MonoQ | エンジニアの実力を、正しく評価する。",
+      "isPartOf": {
+        "@id": "https://monoq.jp/#website"
+      },
+      "about": {
+        "@id": "https://monoq.jp/#organization"
+      },
+      "primaryImageOfPage": {
+        "@id": "https://monoq.jp/#logo"
+      },
+      "inLanguage": "ja",
+      "description": "MonoQは、AIコーディングテストを通じてエンジニアのスキルを客観的に可視化・定量化し、採用、配属、人材評価の意思決定を支援するモノク株式会社のIT人材評価サービスです。",
+      "mainEntity": [
+        {
+          "@id": "https://monoq.jp/#faq"
+        },
+        {
+          "@id": "https://monoq.jp/#service-monoq"
+        },
+        {
+          "@id": "https://monoq.jp/#service-ses"
+        }
+      ]
+    },
+    {
+      "@type": [
+        "Organization",
+        "LocalBusiness",
+        "ProfessionalService"
+      ],
+      "@id": "https://monoq.jp/#organization",
+      "name": "モノク株式会社",
+      "alternateName": [
+        "MonoQ, Inc.",
+        "MonoQ",
+        "モノク"
+      ],
+      "legalName": "モノク株式会社",
+      "url": "https://monoq.jp/",
+      "foundingDate": "2026-02-21",
+      "telephone": "+81-6-7878-6131",
+      "slogan": "エンジニアの実力を、正しく評価する。",
+      "description": "モノク株式会社は、システムエンジニアリングサービスとIT人材評価SaaS「MonoQ」を展開する大阪市中央区の企業です。AIコーディングテストを通じて、エンジニアの技術力や課題解決力を客観的に可視化し、企業の採用判断、配属判断、既存人材の評価を支援します。",
+      "logo": {
+        "@id": "https://monoq.jp/#logo"
+      },
+      "image": {
+        "@id": "https://monoq.jp/#logo"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "postalCode": "541-0054",
+        "addressRegion": "大阪府",
+        "addressLocality": "大阪市中央区",
+        "streetAddress": "南本町2丁目3-12 EDGE本町3F",
+        "addressCountry": "JP"
+      },
+      "areaServed": [
+        {
+          "@type": "Country",
+          "name": "日本"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "大阪府"
+        }
+      ],
+      "founder": {
+        "@id": "https://monoq.jp/#founder"
+      },
+      "employee": {
+        "@id": "https://monoq.jp/#founder"
+      },
+      "contactPoint": [
+        {
+          "@type": "ContactPoint",
+          "telephone": "+81-6-7878-6131",
+          "contactType": "customer support",
+          "areaServed": "JP",
+          "availableLanguage": [
+            "ja"
+          ]
+        },
+        {
+          "@type": "ContactPoint",
+          "contactType": "sales",
+          "areaServed": "JP",
+          "availableLanguage": [
+            "ja"
+          ]
+        }
+      ],
+      "makesOffer": [
+        {
+          "@id": "https://monoq.jp/#offer-ses"
+        },
+        {
+          "@id": "https://monoq.jp/#offer-monoq"
+        }
+      ]
+    },
+    {
+      "@type": "ImageObject",
+      "@id": "https://monoq.jp/#logo",
+      "name": "MonoQ logo",
+      "contentUrl": "https://monoq.jp/assets/logo.svg",
+      "representativeOfPage": true
+    },
+    {
+      "@type": "Person",
+      "@id": "https://monoq.jp/#founder",
+      "name": "新谷 涼花",
+      "jobTitle": "代表取締役",
+      "worksFor": {
+        "@id": "https://monoq.jp/#organization"
+      },
+      "affiliation": {
+        "@id": "https://monoq.jp/#organization"
+      },
+      "description": "モノク株式会社の代表取締役。AIコーディングテストとSES事業の知見を活かし、技術力が正しく評価される社会の実現を目指しています。"
+    },
+    {
+      "@type": "Offer",
+      "@id": "https://monoq.jp/#offer-ses",
+      "itemOffered": {
+        "@id": "https://monoq.jp/#service-ses"
+      },
+      "seller": {
+        "@id": "https://monoq.jp/#organization"
+      },
+      "areaServed": "JP",
+      "availability": "https://schema.org/InStock"
+    },
+    {
+      "@type": "Offer",
+      "@id": "https://monoq.jp/#offer-monoq",
+      "itemOffered": {
+        "@id": "https://monoq.jp/#service-monoq"
+      },
+      "seller": {
+        "@id": "https://monoq.jp/#organization"
+      },
+      "areaServed": "JP",
+      "availability": "https://schema.org/InStock"
+    },
+    {
+      "@type": "Service",
+      "@id": "https://monoq.jp/#service-ses",
+      "name": "システムエンジニアリングサービス",
+      "serviceType": "System Engineering Service",
+      "provider": {
+        "@id": "https://monoq.jp/#organization"
+      },
+      "areaServed": "JP",
+      "audience": [
+        {
+          "@type": "BusinessAudience",
+          "name": "開発プロジェクトを推進する企業"
+        },
+        {
+          "@type": "BusinessAudience",
+          "name": "Webサービス・システム開発の技術支援を必要とする企業"
+        }
+      ],
+      "description": "企業の開発プロジェクトに対して経験豊富なエンジニアを提供し、Webサービス開発やシステム開発を支援します。現場におけるスキル評価や人材配置の実態を捉え、評価基準の精度向上にも繋げます。",
+      "category": [
+        "システム開発",
+        "Webサービス開発",
+        "エンジニアリング支援",
+        "SES"
+      ]
+    },
+    {
+      "@type": "Service",
+      "@id": "https://monoq.jp/#service-monoq",
+      "name": "IT人材評価SaaS MonoQ",
+      "alternateName": "MonoQ",
+      "serviceType": "AI Coding Test and Engineer Skill Assessment SaaS",
+      "provider": {
+        "@id": "https://monoq.jp/#organization"
+      },
+      "areaServed": "JP",
+      "audience": [
+        {
+          "@type": "BusinessAudience",
+          "name": "エンジニア採用を行う企業"
+        },
+        {
+          "@type": "BusinessAudience",
+          "name": "既存エンジニアの評価や配属判断を行う企業"
+        },
+        {
+          "@type": "BusinessAudience",
+          "name": "IT人材の技術力を客観的に把握したい企業"
+        }
+      ],
+      "description": "MonoQは、AIコーディングテストを通じてエンジニアのスキルを客観的に可視化・定量化するIT人材評価SaaSです。テスト結果をスコア化し、技術力、課題解決力、採用時のスクリーニング、配属判断、既存人材評価などの意思決定に活用できます。",
+      "category": [
+        "IT人材評価",
+        "AIコーディングテスト",
+        "エンジニア採用",
+        "スキル可視化",
+        "人材配置",
+        "SaaS"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "MonoQ 活用領域",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "採用スクリーニング支援",
+              "description": "AIコーディングテストの結果をもとに、エンジニア採用時の候補者スクリーニングを支援します。"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "配属判断支援",
+              "description": "技術力や課題解決力のスコアを活用し、プロジェクトやチームへの配属判断を支援します。"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "既存人材評価支援",
+              "description": "既存エンジニアのスキルを定量的に把握し、評価や育成方針の検討に活用できます。"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://monoq.jp/#faq",
+      "inLanguage": "ja",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "MonoQでは、どのようにエンジニアのスキルを評価しますか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "AIコーディングテストを通じて、技術力や課題解決力をスコアとして可視化します。経歴や印象だけでは把握しづらい実力を、客観的な判断材料として扱えるようにすることを目指しています。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "採用活動以外にも活用できますか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "はい。採用時のスクリーニングだけでなく、配属判断、既存人材の評価、育成方針の検討など、エンジニアに関する様々な意思決定に活用できます。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "SES事業と評価SaaSはどのようにつながっていますか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "SES事業では、企業の開発現場を支援しながら、現場におけるスキル評価や人材配置の実態を捉えています。その知見を活かし、評価基準の精度向上とサービス開発につなげています。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "評価結果はどのような形で確認できますか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "テスト結果はスコアとして可視化され、技術力や課題解決力などを定量的に把握できます。企業が比較・検討しやすい評価材料として利用できる設計を想定しています。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "相談時に準備しておくものはありますか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "必須の資料はありません。採用や評価で課題に感じていること、開発体制や人材配置で困っていることがあれば、お問い合わせ内容に記載してください。"
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://monoq.jp/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Top",
+          "item": "https://monoq.jp/#top"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Vision",
+          "item": "https://monoq.jp/#vision"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Business",
+          "item": "https://monoq.jp/#business"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Company",
+          "item": "https://monoq.jp/#company"
+        },
+        {
+          "@type": "ListItem",
+          "position": 5,
+          "name": "Message",
+          "item": "https://monoq.jp/#message"
+        },
+        {
+          "@type": "ListItem",
+          "position": 6,
+          "name": "FAQ",
+          "item": "https://monoq.jp/#faq"
+        },
+        {
+          "@type": "ListItem",
+          "position": 7,
+          "name": "Contact",
+          "item": "https://monoq.jp/#contact"
+        }
+      ]
+    }
+  ]
+}
+`} />
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NXHD6FND"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<Opening />
+
+<!-- ─── NAV ─────────────────────────────────── -->
+<Nav />
+
+<slot />
+
+<TweaksPanel client:idle />
+
+<script src="/scripts/main.js?v=20260601-1245" data-astro-rerun is:inline></script>
+
+</body>
+</html>

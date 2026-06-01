@@ -1,0 +1,27 @@
+.DS_Store
+._*
+.thumbnail
+
+AGENTS.md
+CLAUDE.md
+.claude/
+
+text.txt
+*.grd
+ロゴ関係/
+astro/public/uploads 2/
+
+**/.env
+**/.env.*
+!**/.env.example
+
+**/node_modules/
+**/dist/
+**/.astro/
+**/.preview.log
+**/.preview.err.log
+
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/pnpm-debug.log*

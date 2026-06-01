@@ -1,0 +1,45 @@
+---
+import { formatNewsDate, getNewsList } from '../lib/microcms';
+
+const latestNews = await getNewsList(6);
+const revealDelay = ['', 'd1', 'd2'];
+---
+<section id="news" class="sec">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="reveal">
+        <div class="sec-num"><span class="grad-bar"></span><span class="big"><b>05</b> &nbsp;- &nbsp;NEWS</span></div>
+        <div class="label">お知らせ</div>
+      </div>
+      <h2 class="sec-title reveal d1">最新の動向と、<br/><em>取り組みについて。</em></h2>
+    </header>
+
+    <div class="news-grid">
+      {latestNews.map((item, index) => (
+        <article class:list={['news-card', 'reveal', revealDelay[index % revealDelay.length]]}>
+          <a href={`/news/${item.id}/`} class="news-link">
+            <div class="news-thumb" transition:name={`news-thumb-${item.id}`}>
+              <img src={item.eyecatch?.url} alt="" loading="lazy" />
+              <div class:list={['news-cat', index === 0 && 'is-accent']}>{item.category}</div>
+            </div>
+            <div class="news-meta">
+              <time class="news-date" datetime={item.publishedAt}>{formatNewsDate(item.publishedAt)}</time>
+              <span class="dot"></span>
+              <span class="news-tag">{item.tag}</span>
+            </div>
+            <h3 class="news-title" transition:name={`news-title-${item.id}`}>{item.title}</h3>
+            <p class="news-excerpt">{item.excerpt}</p>
+            <span class="news-readmore">続きを読む <span class="svg-arrow" aria-hidden="true"></span></span>
+          </a>
+        </article>
+      ))}
+    </div>
+
+    <div class="news-foot reveal">
+      <a href="/news/" class="news-all">
+        <span>すべてのお知らせを見る</span>
+        <span class="svg-arrow" aria-hidden="true"></span>
+      </a>
+    </div>
+  </div>
+</section>

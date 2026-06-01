@@ -1,0 +1,239 @@
+
+<style>
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-mono/index.css');
+*{box-sizing:border-box;margin:0;padding:0}
+
+.site{background:#040905;font-family:'Noto Sans Mono','Courier New',monospace;position:relative;min-height:608px;border-radius:14px;overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,0.9),0 0 0 1px rgba(255,255,255,0.05)}
+.bgl{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.bgc{position:absolute;top:0;font-size:9px;line-height:1.8;white-space:pre;animation:bgUp linear infinite}
+@keyframes bgUp{from{transform:translateY(108%)}to{transform:translateY(-108%)}}
+
+.nav{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:14px 26px;border-bottom:0.5px solid rgba(78,216,81,0.1)}
+.nlogo{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700;color:#fff;letter-spacing:0.18em}
+.nico{width:22px;height:22px;border:1.5px solid #4ED851;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#4ED851}
+.nlinks{display:flex;gap:22px;list-style:none}
+.nlinks a{font-size:11px;color:#fff;text-decoration:none;letter-spacing:0.03em}
+.nlinks a sup{font-size:7px;color:#4ED851}
+.nbtn{font-size:10.5px;color:#4ED851;border:1px solid #4ED851;padding:8px 15px;border-radius:5px;background:transparent;cursor:pointer;font-family:inherit;letter-spacing:0.05em;display:flex;align-items:center;gap:6px}
+
+.bd{position:relative;z-index:5;display:grid;grid-template-columns:80px 1fr 180px;min-height:514px}
+.sl{padding:20px 6px 20px 14px;font-size:9px;color:rgba(78,216,81,0.17);line-height:2.5;border-right:0.5px solid rgba(78,216,81,0.06)}
+.ct{padding:20px 16px;display:flex;flex-direction:column;justify-content:center}
+
+.tmouter{padding:1px;border-radius:13px;margin-bottom:18px;
+  background:linear-gradient(145deg,rgba(255,255,255,0.22) 0%,rgba(80,80,80,0.08) 35%,rgba(0,0,0,0.9) 100%);
+  box-shadow:0 28px 60px rgba(0,0,0,0.8),0 0 0 0.5px rgba(0,0,0,1)}
+.tm{background:#080d08;border-radius:12px;overflow:hidden}
+
+.tmbar{
+  background:linear-gradient(90deg,#1e2a1e 0%,#111611 50%,#000 100%);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;border-bottom:1px solid rgba(0,0,0,0.8);position:relative
+}
+.ttraf{display:flex;gap:7px}
+.ttl{width:12px;height:12px;border-radius:50%}
+.ttl-r{background:radial-gradient(circle at 35% 30%,#ff7c70,#ff5f57);box-shadow:0 0 0 0.5px rgba(0,0,0,0.5)}
+.ttl-y{background:radial-gradient(circle at 35% 30%,#ffd968,#febc2e);box-shadow:0 0 0 0.5px rgba(0,0,0,0.5)}
+.ttl-g{background:radial-gradient(circle at 35% 30%,#55e070,#28c840);box-shadow:0 0 0 0.5px rgba(0,0,0,0.5)}
+.tmtitle{position:absolute;left:50%;transform:translateX(-50%);font-size:10.5px;color:rgba(255,255,255,0.25);letter-spacing:0.03em}
+.tconn{display:flex;align-items:center;gap:5px;font-size:8.5px;color:#4ED851;letter-spacing:0.06em}
+.cdot{width:5px;height:5px;border-radius:50%;background:#4ED851;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.18}}
+
+.cblock{padding:12px 14px 10px;border-bottom:0.5px solid rgba(78,216,81,0.055)}
+.cl{display:flex;align-items:baseline;font-size:9.5px;line-height:2}
+.ln{color:rgba(78,216,81,0.1);width:16px;text-align:right;flex-shrink:0;margin-right:8px;user-select:none}
+.sp{color:rgba(78,216,81,0.08);margin-right:8px;flex-shrink:0}
+.c0{color:rgba(129,208,215,0.22)}.cv{color:rgba(129,208,215,0.58)}
+.cs{color:rgba(78,216,81,0.44)}.cf{color:rgba(78,216,81,0.52)}
+.ck{color:rgba(129,208,215,0.48)}.cd{color:rgba(255,255,255,0.17)}.cx{color:rgba(78,216,81,0.48)}
+
+.runsec{padding:16px 14px 24px}
+.rcmd{font-size:11px;color:rgba(78,216,81,0.4);margin-bottom:16px;min-height:15px}
+.rhead{font-size:30px;color:#4ED851;line-height:1.12;margin-bottom:14px;min-height:36px;font-weight:500;letter-spacing:-0.02em}
+.rsub{font-size:15px;color:#81D0D7;line-height:1.75;min-height:42px}
+
+.cbg{display:inline-block;width:13px;height:1.05em;background:#4ED851;vertical-align:bottom;animation:blink 1s step-end infinite}
+.cbt{display:inline-block;width:9px;height:.9em;background:#81D0D7;vertical-align:bottom;animation:blink 1s step-end infinite}
+.cbs{display:inline-block;width:8px;height:.85em;background:#81D0D7;vertical-align:bottom;animation:blink 1s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+.bmsg{font-size:13px;color:#81D0D7;line-height:1.8;margin-bottom:20px;min-height:18px}
+.expl{display:inline-flex;align-items:center;gap:8px;font-size:11px;color:#4ED851;border:0.5px solid rgba(78,216,81,0.38);padding:10px 20px;border-radius:5px;background:transparent;cursor:pointer;font-family:inherit}
+
+.sr{padding:18px 12px;font-size:8.5px;line-height:1.75;border-left:0.5px solid rgba(78,216,81,0.05)}
+.srb{margin-bottom:16px}
+.src{color:rgba(78,216,81,0.35);margin-bottom:5px;font-size:9px}
+.srd{color:rgba(78,216,81,0.13);line-height:1.8}
+.srh{color:rgba(78,216,81,0.32);margin-bottom:5px;font-size:9px;letter-spacing:0.05em}
+.sri{color:rgba(78,216,81,0.14);line-height:2}.sri span{color:rgba(129,208,215,0.5)}
+.mbox{border:0.5px dashed rgba(129,208,215,0.11);padding:10px;border-radius:3px}
+.mh{color:rgba(129,208,215,0.28);font-size:8px;letter-spacing:0.12em;margin-bottom:5px}
+.mt{color:rgba(129,208,215,0.14);line-height:1.9;font-size:8.5px}
+.pc{color:rgba(78,216,81,0.3);font-size:9px;margin-bottom:4px}
+.pb{color:rgba(78,216,81,0.2);font-size:8.5px;margin-bottom:3px}
+.pr{color:rgba(129,208,215,0.42);font-size:8.5px;opacity:0;transition:opacity .4s}
+.bf{position:relative;z-index:5;padding:7px 20px;font-size:8px;color:rgba(78,216,81,0.07);border-top:0.5px solid rgba(78,216,81,0.04);white-space:nowrap;overflow:hidden}
+</style>
+
+<div class="site">
+  <div class="bgl" id="bgl"></div>
+
+  <nav class="nav">
+    <div class="nlogo"><div class="nico">M</div>MONOKU</div>
+    <ul class="nlinks">
+      <li><a href="#">Product<sup>*</sup></a></li>
+      <li><a href="#">Use Cases</a></li>
+      <li><a href="#">Pricing</a></li>
+      <li><a href="#">Company</a></li>
+      <li><a href="#">Careers</a></li>
+    </ul>
+    <button class="nbtn">Contact Us &nbsp;↗</button>
+  </nav>
+
+  <div class="bd">
+    <div class="sl">
+      <div>./monoku</div><div>evaluate/</div><div>skills/</div>
+      <div>metrics/</div><div>reports/</div><div>teams/</div><div>docs/</div>
+    </div>
+
+    <div class="ct">
+      <div class="tmouter">
+        <div class="tm">
+          <div class="tmbar">
+            <div class="ttraf">
+              <div class="ttl ttl-r"></div>
+              <div class="ttl ttl-y"></div>
+              <div class="ttl ttl-g"></div>
+            </div>
+            <div class="tmtitle">monoku-eval.sh — zsh</div>
+            <div class="tconn"><div class="cdot"></div>CONNECTED</div>
+          </div>
+
+          <div class="cblock">
+            <div class="cl"><span class="ln">1</span><span class="sp">│</span><span class="c0">#!/usr/bin/env bash</span></div>
+            <div class="cl"><span class="ln">2</span><span class="sp">│</span><span class="c0"># monoku-eval.sh &nbsp;v1.0</span></div>
+            <div class="cl"><span class="ln">3</span><span class="sp">│</span></div>
+            <div class="cl"><span class="ln">4</span><span class="sp">│</span><span class="cv">TITLE</span><span class="cd">=</span><span class="cs">"エンジニア評価の構造を、変える。"</span></div>
+            <div class="cl"><span class="ln">5</span><span class="sp">│</span><span class="cv">DESC</span><span class="cd">=</span><span class="cs">"属人的で曖昧なエンジニア評価を、"</span></div>
+            <div class="cl"><span class="ln">6</span><span class="sp">│</span></div>
+            <div class="cl"><span class="ln">7</span><span class="sp">│</span><span class="cf">eval_run</span><span class="cd">() {</span></div>
+            <div class="cl"><span class="ln">8</span><span class="sp">│</span>&nbsp;&nbsp;<span class="ck">bias</span> <span class="cd">--remove &&</span> <span class="ck">skill_matrix</span> <span class="cd">--init</span></div>
+            <div class="cl"><span class="ln">9</span><span class="sp">│</span>&nbsp;&nbsp;<span class="ck">printf</span> <span class="cd">'%s\n'</span> <span class="cx">"$TITLE"</span> <span class="cx">"$DESC"</span></div>
+            <div class="cl"><span class="ln">10</span><span class="sp">│</span><span class="cd">} &&</span> <span class="cf">eval_run</span></div>
+          </div>
+
+          <div class="runsec">
+            <div class="rcmd" id="rcmd"><span class="cbg"></span></div>
+            <div class="rhead" id="rhead"></div>
+            <div class="rsub" id="rsub"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bmsg" id="bmsg"></div>
+      <button class="expl">評価の仕組みを見る &nbsp;↗</button>
+    </div>
+
+    <div class="sr">
+      <div class="srb">
+        <div class="src">$ git commit -m "redesign"</div>
+        <div class="srd">Enumerating objects: 482</div>
+        <div class="srd">Writing 1.24 MiB | done</div>
+        <div class="srd" style="color:rgba(78,216,81,0.22);margin-top:3px">a3f1c2 main → main</div>
+      </div>
+      <div class="srb">
+        <div class="srh">&gt; SYSTEM_STATUS</div>
+        <div class="sri">■ eval-engine: <span>online</span></div>
+        <div class="sri">■ skill-matrix: <span>ready</span></div>
+        <div class="sri">■ bias-check: <span>passed</span></div>
+        <div class="sri">■ output: <span>reproducible</span></div>
+      </div>
+      <div class="mbox srb">
+        <div class="mh">MISSION</div>
+        <div class="mt">属人性を排除し<br>スキルで語れる<br>評価基準をつくる</div>
+      </div>
+      <div class="srb">
+        <div class="pc">$ ./evaluation --run</div>
+        <div class="pb">Progress: [<span id="pf"></span>] <span id="pp">0%</span></div>
+        <div class="pr" id="pr">Result: Bias Removed. ✔</div>
+        <div class="srd" style="margin-top:5px">$ <span class="cbs"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bf">64 bytes from eval.monoku.io: icmp_seq=1 ttl=64 time=0.09 ms &nbsp;&nbsp; icmp_seq=2 time=0.11 ms &nbsp;&nbsp; icmp_seq=3 time=0.10 ms</div>
+</div>
+
+<script>
+(function(){
+  const lines=[
+    '#!/usr/bin/env bash','# monoku-eval.sh v1.0',
+    "TITLE='エンジニア評価の構造を'",'eval_run() {',
+    "  printf '%s\\n' \"$TITLE\"",'  bias --remove && skill_matrix --init',
+    '}','if [ -z "$BIAS" ]; then eval_run; fi',
+    'for eng in "${TEAM[@]}"; do evaluate "$eng"; done',
+    '$ monoku eval --engineer profile.json',
+    '$ monoku skill-check --auto-remove-bias',
+    'SELECT skill,level FROM engineers WHERE bias=0;',
+    "git commit -m 'remove eval bias'",'kubectl apply -f eval-deploy.yaml',
+    'const matrix = new SkillMatrix();',
+    'await matrix.calibrate({ team: engineers });',
+    'import { EvalEngine } from "@monoku/core";',
+  ];
+  const bgl=document.getElementById('bgl');
+  [{l:'1%',d:34,t:0,g:1},{l:'13%',d:27,t:-10,g:0},{l:'28%',d:40,t:-18,g:1},
+   {l:'46%',d:30,t:-5,g:0},{l:'62%',d:36,t:-23,g:1},{l:'76%',d:28,t:-14,g:0},{l:'91%',d:33,t:-8,g:1}
+  ].forEach(c=>{
+    const el=document.createElement('div');
+    el.className='bgc';
+    el.style.cssText=`left:${c.l};animation-duration:${c.d}s;animation-delay:${c.t}s;color:${c.g?'rgba(78,216,81,0.06)':'rgba(129,208,215,0.045)'}`;
+    let t='';for(let i=0;i<55;i++)t+=lines[Math.floor(Math.random()*lines.length)]+'\n';
+    el.textContent=t+t;bgl.appendChild(el);
+  });
+
+  const rcmd=document.getElementById('rcmd'),rhead=document.getElementById('rhead'),
+        rsub=document.getElementById('rsub'),bmsg=document.getElementById('bmsg');
+  const CMD='$ bash monoku-eval.sh';
+  const HEAD='エンジニア評価の構造を、\n変える。';
+  const SUB='属人的で曖昧なエンジニア評価を、\nスキルを基準とした再現性のある評価へ。';
+  const BODY='モノクは、評価のあり方そのものを再設計します。';
+
+  function typ(el,text,spd,cur,done){
+    let i=0;el.innerHTML=`<span class="${cur}"></span>`;
+    (function t(){
+      if(i<text.length){
+        const ch=text[i++];
+        let c=el.innerHTML.replace(/<span[^>]*><\/span>/g,'');
+        c+=ch==='\n'?'<br>':ch;
+        el.innerHTML=c+`<span class="${cur}"></span>`;
+        setTimeout(t,spd+Math.random()*spd*.5);
+      } else {
+        el.innerHTML=el.innerHTML.replace(/<span[^>]*><\/span>/g,'');
+        done&&done();
+      }
+    })();
+  }
+
+  setTimeout(()=>{
+    typ(rcmd,CMD,40,'cbg',()=>{
+      setTimeout(()=>{
+        typ(rhead,HEAD,82,'cbg',()=>{
+          setTimeout(()=>{
+            typ(rsub,SUB,32,'cbt',()=>{
+              setTimeout(()=>{typ(bmsg,BODY,26,'cbs',()=>{});},300);
+            });
+          },200);
+        });
+      },350);
+    });
+  },900);
+
+  const pf=document.getElementById('pf'),pp=document.getElementById('pp'),pr=document.getElementById('pr');
+  let p=0;
+  setTimeout(function go(){
+    if(p<=18){pf.textContent='='.repeat(p)+(p<18?'>':'');pp.textContent=Math.round(p/18*100)+'%';p++;setTimeout(go,175);}
+    else pr.style.opacity='1';
+  },2400);
+})();
+</script>

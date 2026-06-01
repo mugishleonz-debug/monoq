@@ -1,0 +1,85 @@
+---
+---
+<section id="contact" class="sec">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="reveal">
+        <div class="sec-num"><span class="grad-bar"></span><span class="big"><b>07</b> &nbsp;-&nbsp; CONTACT</span></div>
+        <div class="label">お問い合わせ</div>
+      </div>
+      <h2 class="sec-title reveal d1">ご相談は、<br /><em>こちらから。</em></h2>
+    </header>
+
+    <div class="ct-grid">
+      <form class="ct-form reveal" action="/contact.php" method="post" data-recaptcha-site-key="6LdBbgYtAAAAANyIZYbYfY7eeUE1bpXls-5FUpCS">
+        <div class="ct-result" role="status" aria-live="polite" hidden></div>
+        <div class="ct-row">
+          <div class="ct-field">
+            <label for="contact-company">法人名<span class="req">*</span></label>
+            <input id="contact-company" type="text" name="company" placeholder="モノク株式会社" autocomplete="organization" required />
+          </div>
+          <div class="ct-field">
+            <label for="contact-name">氏名<span class="req">*</span></label>
+            <input id="contact-name" type="text" name="name" placeholder="山田 太郎" autocomplete="name" required />
+          </div>
+        </div>
+        <div class="ct-row">
+          <div class="ct-field">
+            <label for="contact-tel">電話番号<span class="req">*</span></label>
+            <input id="contact-tel" type="tel" name="tel" placeholder="06-7878-6131" autocomplete="tel" required />
+          </div>
+          <div class="ct-field">
+            <label for="contact-email">メールアドレス<span class="req">*</span></label>
+            <input id="contact-email" type="email" name="email" placeholder="name@company.com" autocomplete="email" required />
+          </div>
+        </div>
+        <div class="ct-field">
+          <label for="contact-message">お問い合わせ内容</label>
+          <textarea id="contact-message" name="message" placeholder="ご相談内容や課題感をご入力ください。"></textarea>
+        </div>
+        <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <input type="hidden" name="g-recaptcha-response" class="recaptcha-token" />
+        <label class="privacy-check">
+          <input type="checkbox" name="privacy" value="1" required />
+          <span><a href="/privacy/">プライバシーポリシー</a>を確認し、個人情報の取り扱いに同意します。</span>
+        </label>
+        <button type="submit" class="ct-submit">送信 <span class="plane" aria-hidden="true"></span></button>
+      </form>
+
+      <div class="ct-modal" id="contact-confirm" role="dialog" aria-modal="true" aria-labelledby="contact-confirm-title" hidden>
+        <div class="ct-modal-panel">
+          <button class="ct-modal-close" type="button" aria-label="閉じる" data-confirm-close>×</button>
+          <div class="ct-modal-label">CONFIRM</div>
+          <h3 id="contact-confirm-title">入力内容をご確認ください。</h3>
+          <dl class="ct-confirm-list">
+            <div><dt>法人名</dt><dd data-confirm-field="company"></dd></div>
+            <div><dt>氏名</dt><dd data-confirm-field="name"></dd></div>
+            <div><dt>電話番号</dt><dd data-confirm-field="tel"></dd></div>
+            <div><dt>メールアドレス</dt><dd data-confirm-field="email"></dd></div>
+            <div><dt>お問い合わせ内容</dt><dd data-confirm-field="message"></dd></div>
+          </dl>
+          <p class="ct-modal-error" data-confirm-error hidden></p>
+          <div class="ct-modal-actions">
+            <button type="button" class="ct-modal-back" data-confirm-close>修正する</button>
+            <button type="button" class="ct-modal-submit" data-confirm-send>この内容で送信</button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="ct-info reveal d1">
+        <h4>モノク株式会社</h4>
+        <div>〒541-0054<br />大阪府大阪市中央区南本町2丁目3-12<br />EDGE本町3F</div>
+        <h4>連絡先</h4>
+        <div><a href="tel:0678786131">06-7878-6131</a></div>
+        <h4>事業内容</h4>
+        <div>システムエンジニアリングサービス<br />IT人材評価SaaS「MonoQ」の開発</div>
+        <div class="term">
+$ ssh contact@monoq.jp<br />
+MonoQ contact form ready.<br />
+Please send your message.<br />
+<span style="color:rgba(255,132,0,0.7)">$ _</span>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>

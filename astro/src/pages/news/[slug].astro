@@ -1,0 +1,81 @@
+---
+import { formatNewsDate, getAllNews } from '../../lib/microcms';
+import { ClientRouter } from 'astro:transitions';
+import MonoQLogo from '../../components/MonoQLogo.astro';
+
+export async function getStaticPaths() {
+  const news = await getAllNews();
+  return news.map((item) => ({
+    params: { slug: item.id },
+    props: { item },
+  }));
+}
+
+const { item } = Astro.props;
+
+const description = item.seoDescription || item.excerpt;
+const ogImage = item.seoOgImage?.url || item.eyecatch?.url;
+---
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{item.title} | MonoQ</title>
+    <meta name="description" content={description} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta property="og:title" content={`${item.title} | MonoQ`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="article" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+JP:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+    <ClientRouter fallback="animate" />
+    <style>
+      @keyframes pageIn{from{opacity:.001;transform:translateY(18px);filter:blur(8px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+      @keyframes pageOut{from{opacity:1;transform:translateY(0);filter:blur(0)}to{opacity:.001;transform:translateY(-12px);filter:blur(6px)}}
+      ::view-transition-old(root){animation:pageOut .32s cubic-bezier(.4,0,.2,1) both}
+      ::view-transition-new(root){animation:pageIn .46s cubic-bezier(.2,.7,.2,1) both}
+      ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation-duration:.46s}
+      @media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation:none}}
+      :root{--bg:#f4f1ea;--fg:#171814;--muted:#6f7069;--line:rgba(23,24,20,.14);--accent:#ff6b00;--sans:"Zen Kaku Gothic New",sans-serif;--serif:"Noto Serif JP",serif;--mono:"IBM Plex Mono",monospace}
+      *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);letter-spacing:.02em} a{color:inherit;text-decoration:none} img{max-width:100%;height:auto}
+      .wrap{width:min(960px,calc(100% - 64px));margin:0 auto}.nav{height:92px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{display:inline-flex;align-items:center;--monoq-logo-width:162px}.back{font-family:var(--mono);font-size:13px;border:1px solid var(--fg);padding:14px 22px;border-radius:4px}
+      article{padding:86px 0 128px}.meta{display:flex;gap:12px;align-items:center;font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:24px}.cat{color:var(--accent)}.dot{width:3px;height:3px;border-radius:50%;background:var(--line)}
+      h1{font-family:var(--serif);font-size:clamp(38px,6vw,72px);font-weight:500;line-height:1.24;letter-spacing:.01em;margin:0 0 30px}.excerpt{font-size:17px;line-height:2;color:var(--muted);max-width:760px;margin:0 0 52px}.eyecatch{aspect-ratio:16/10;overflow:hidden;border-radius:4px;background:#e8e2d7;margin-bottom:64px}.eyecatch img{width:100%;height:100%;object-fit:cover;display:block}
+      .body{font-size:16px;line-height:2.1}.body :global(h2){font-family:var(--serif);font-size:32px;font-weight:500;margin:64px 0 20px}.body :global(h3){font-size:24px;margin:48px 0 18px}.body :global(p){margin:0 0 28px}.body :global(a){color:var(--accent);text-decoration:underline;text-underline-offset:4px}.body :global(blockquote){border-left:3px solid var(--accent);margin:40px 0;padding:4px 0 4px 24px;color:var(--muted)}.body :global(pre){background:#10110f;color:#f7f1e7;padding:24px;overflow:auto;border-radius:4px}
+      .foot{margin-top:72px;padding-top:32px;border-top:1px solid var(--line)}.foot a{font-family:var(--mono);font-size:13px;color:var(--muted)}
+      @media(max-width:640px){.wrap{width:min(100% - 40px,960px)}.nav{height:76px}article{padding:64px 0 96px}.eyecatch{margin-bottom:44px}}
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <nav class="nav">
+        <a href="/" class="brand" aria-label="MonoQ トップへ"><MonoQLogo /></a>
+        <a href="/news/" class="back">News</a>
+      </nav>
+      <article>
+        <div class="meta">
+          <span class="cat">{item.category}</span>
+          <span class="dot"></span>
+          <time datetime={item.publishedAt}>{formatNewsDate(item.publishedAt)}</time>
+          <span class="dot"></span>
+          <span>{item.tag}</span>
+        </div>
+        <h1 transition:name={`news-title-${item.id}`}>{item.title}</h1>
+        <p class="excerpt">{item.excerpt}</p>
+        <div class="eyecatch" transition:name={`news-thumb-${item.id}`}>
+          <img src={item.eyecatch?.url} alt="" />
+        </div>
+        <div class="body" set:html={item.body}></div>
+        <div class="foot">
+          <a href="/news/">← すべてのお知らせへ</a>
+        </div>
+      </article>
+    </div>
+  </body>
+</html>
